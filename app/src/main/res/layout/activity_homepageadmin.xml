@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomepageAdmin">
+
+    <ImageView
+        android:id="@+id/background_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg3"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        android:alpha="0.9"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/settingsIcon"
+        android:layout_width="71dp"
+        android:layout_height="69dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/iconuser"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/infowelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Welcome"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/username"
+        app:layout_constraintStart_toEndOf="@+id/settingsIcon"
+        app:layout_constraintTop_toTopOf="@+id/settingsIcon"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Username here"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/shopname"
+        app:layout_constraintStart_toEndOf="@+id/settingsIcon"
+        app:layout_constraintTop_toBottomOf="@+id/infowelcome"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/shopname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="of Shop Name"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/settingsIcon"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
+    <ImageView
+        android:id="@+id/logoutbutton"
+        android:layout_width="42dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logoutwhite"
+        tools:ignore="ContentDescription,ImageContrastCheck" />
+
+    <TextView
+        android:id="@+id/logout_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Logout"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/logoutbutton"
+        app:layout_constraintStart_toStartOf="@+id/logoutbutton"
+        app:layout_constraintTop_toBottomOf="@+id/logoutbutton"
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="90dp"
+        android:text="Categories"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logout_text"
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/allcat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_orange_background"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="All"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/category"
+        tools:ignore="HardcodedText,MissingConstraints,TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/toolscat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:background="@drawable/rounded_transparent_background"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="Tools"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/allcat"
+        app:layout_constraintTop_toTopOf="@+id/allcat"
+        tools:ignore="HardcodedText,MissingConstraints,TextContrastCheck" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tools_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/allcat">
+
+        <ImageView
+            android:id="@+id/cutbg"
+            android:layout_width="63dp"
+            android:layout_height="59dp"
+            android:layout_marginStart="41dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/iconcircle"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/queuelogo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cutbg"
+            app:layout_constraintEnd_toEndOf="@+id/cutbg"
+            app:layout_constraintStart_toStartOf="@+id/cutbg"
+            app:layout_constraintTop_toTopOf="@+id/cutbg"
+            app:srcCompat="@drawable/queueicon"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/queueservice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Manage\nQueue"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/cutbg"
+            app:layout_constraintStart_toStartOf="@+id/cutbg"
+            app:layout_constraintTop_toBottomOf="@+id/cutbg"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+
+        <ImageView
+            android:id="@+id/appointbg"
+            android:layout_width="63dp"
+            android:layout_height="59dp"
+            android:layout_marginStart="40dp"
+            app:layout_constraintStart_toEndOf="@+id/cutbg"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/iconcircle"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/feedbacklogo"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:layout_constraintBottom_toBottomOf="@+id/appointbg"
+            app:layout_constraintEnd_toEndOf="@+id/appointbg"
+            app:layout_constraintStart_toStartOf="@+id/appointbg"
+            app:layout_constraintTop_toTopOf="@+id/appointbg"
+            app:srcCompat="@drawable/feedback"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/feedbackservice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Feedbacks"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/appointbg"
+            app:layout_constraintStart_toStartOf="@+id/appointbg"
+            app:layout_constraintTop_toBottomOf="@+id/appointbg"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+
+        <ImageView
+            android:id="@+id/ratingbg"
+            android:layout_width="63dp"
+            android:layout_height="59dp"
+            android:layout_marginStart="40dp"
+            app:layout_constraintStart_toEndOf="@+id/appointbg"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/iconcircle"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/maplogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ratingbg"
+            app:layout_constraintEnd_toEndOf="@+id/ratingbg"
+            app:layout_constraintStart_toStartOf="@+id/ratingbg"
+            app:layout_constraintTop_toTopOf="@+id/ratingbg"
+            app:srcCompat="@drawable/map"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/mapservice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Map"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/ratingbg"
+            app:layout_constraintStart_toStartOf="@+id/ratingbg"
+            app:layout_constraintTop_toBottomOf="@+id/ratingbg"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/about_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tools_container">
+
+        <ImageView
+            android:id="@+id/aboutbg"
+            android:layout_width="63dp"
+            android:layout_height="59dp"
+            android:layout_marginStart="41dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/iconcircle"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/aboutlogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="@+id/aboutbg"
+            app:layout_constraintEnd_toEndOf="@+id/aboutbg"
+            app:layout_constraintStart_toStartOf="@+id/aboutbg"
+            app:layout_constraintTop_toTopOf="@+id/aboutbg"
+            app:srcCompat="@drawable/info"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/aboutservice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="About"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/aboutbg"
+            app:layout_constraintStart_toStartOf="@+id/aboutbg"
+            app:layout_constraintTop_toBottomOf="@+id/aboutbg"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/homebar"
+        android:layout_width="0dp"
+        android:layout_height="108dp"
+        android:background="@color/espresso"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/homeview"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/home"
+            app:layout_constraintBottom_toTopOf="@id/guideline_homebar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_homebar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="48dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

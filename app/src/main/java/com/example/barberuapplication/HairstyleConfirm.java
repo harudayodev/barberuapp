@@ -51,7 +51,6 @@ public class HairstyleConfirm extends AppCompatActivity {
     private TextView datetimePicker;
     private Button confirmButton;
     private Map<String, Integer> barbershopMap = new HashMap<>();
-
     private List<String> barbershopNames = new ArrayList<>();
     private List<String> barberNames = new ArrayList<>();
 
@@ -63,19 +62,18 @@ public class HairstyleConfirm extends AppCompatActivity {
         returnButton = findViewById(R.id.return_button_confirm);
         customerNameInput = findViewById(R.id.customer_name_input);
         haircutNameInput = findViewById(R.id.haircut_name_input);
+        haircutColorInput = findViewById(R.id.haircut_color_input);
         branchInput = findViewById(R.id.branch_input);
         barberInput = findViewById(R.id.barber_input);
         datetimePicker = findViewById(R.id.datetime_picker);
         confirmButton = findViewById(R.id.confirm_button);
-        // Note: The two lines below are redundant but harmless, keeping for minimal change.
-        haircutNameInput = findViewById(R.id.haircut_name_input);
-        haircutColorInput = findViewById(R.id.haircut_color_input);
 
         String fullname = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                 .getString("fullname", "User");
         customerNameInput.setText(fullname);
 
         new FetchBarbershopsTask().execute();
+
         datetimePicker.setOnClickListener(v -> showDateTimePickerDialog());
 
         branchInput.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -98,8 +96,6 @@ public class HairstyleConfirm extends AppCompatActivity {
         confirmButton.setOnClickListener(v -> checkAndSaveAppointment());
     }
 
-    // ... (showDateTimePickerDialog and showTimePickerDialog methods are unchanged)
-
     private void showDateTimePickerDialog() {
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -107,9 +103,13 @@ public class HairstyleConfirm extends AppCompatActivity {
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    showTimePickerDialog(selectedYear, selectedMonth, selectedDay);
-                }, year, month, day);
+                (view, selectedYear, selectedMonth, selectedDay) ->
+                        showTimePickerDialog(selectedYear, selectedMonth, selectedDay),
+                year, month, day);
+
+        // Prevent selecting past dates
+        datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
+
         datePickerDialog.show();
     }
 
@@ -124,7 +124,8 @@ public class HairstyleConfirm extends AppCompatActivity {
                     selectedDateTime.set(year, month, day, selectedHour, selectedMinute);
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                     SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
-                    datetimePicker.setText(dateFormatter.format(selectedDateTime.getTime()) + " " + timeFormatter.format(selectedDateTime.getTime()));
+                    datetimePicker.setText(dateFormatter.format(selectedDateTime.getTime()) + " " +
+                            timeFormatter.format(selectedDateTime.getTime()));
                 }, hour, minute, false);
         timePickerDialog.show();
     }
@@ -142,29 +143,28 @@ public class HairstyleConfirm extends AppCompatActivity {
             return;
         }
 
-        // Line 141 fix: The class is now accessible.
         new CheckActiveAppointmentTask(customername, branch, haircut, color, barber, dateTime).execute();
     }
 
-    private void showConfirmDialog(final String customername, final String branch, final String haircut, final String color, final String barber, final String dateTime) {
+    private void showConfirmDialog(final String customername, final String branch, final String haircut,
+                                   final String color, final String barber, final String dateTime) {
         new AlertDialog.Builder(this)
                 .setTitle("Confirm Appointment?")
                 .setMessage("Are you sure you want to confirm this appointment?")
-                .setPositiveButton("Yes", (dialog, which) -> saveAppointment(customername, haircut, color, dateTime, branch, barber))
+                .setPositiveButton("Yes", (dialog, which) ->
+                        saveAppointment(customername, haircut, color, dateTime, branch, barber))
                 .setNegativeButton("No", null)
                 .show();
     }
 
-    private void saveAppointment(String customername, String haircut, String color, String dateTime, String branch, String barber) {
+    private void saveAppointment(String customername, String haircut, String color, String dateTime,
+                                 String branch, String barber) {
         String[] dateTimeParts = dateTime.split(" ");
         String date = dateTimeParts[0];
         String timeslot = dateTimeParts[1];
 
-        // Line 158 fix: The class is now accessible.
         new SaveAppointmentTask(customername, haircut, color, date, timeslot, branch, barber).execute();
     }
-
-    // ... (fetchData method is unchanged)
 
     private String fetchData(String requestUrl, Map<String, String> postData) {
         HttpURLConnection connection = null;
@@ -209,19 +209,11 @@ public class HairstyleConfirm extends AppCompatActivity {
             } else {
                 Log.e("fetchData", "Server returned: " + responseCode);
             }
-
         } catch (Exception e) {
             Log.e("fetchData", "Error: " + e.getMessage(), e);
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (Exception ignored) {
-                }
-            }
-            if (connection != null) {
-                connection.disconnect();
-            }
+            try { if (reader != null) reader.close(); } catch (Exception ignored) {}
+            if (connection != null) connection.disconnect();
         }
         return null;
     }
@@ -230,7 +222,6 @@ public class HairstyleConfirm extends AppCompatActivity {
 
     @SuppressLint("StaticFieldLeak")
     private class FetchBarbershopsTask extends AsyncTask<Void, Void, String> {
-        // ... (unchanged)
         @Override
         protected String doInBackground(Void... voids) {
             return fetchData(BASE_URL + "get_barbershops.php", null);
@@ -263,8 +254,8 @@ public class HairstyleConfirm extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class FetchHaircutsTask extends AsyncTask<String, Void, String> {
-        // ... (unchanged)
         @Override
         protected String doInBackground(String... params) {
             String shopID = params[0];
@@ -277,11 +268,7 @@ public class HairstyleConfirm extends AppCompatActivity {
         protected void onPostExecute(String result) {
             if (result != null) {
                 try {
-                    // Assuming get_haircuts.php is fixed to return a single JSON object with arrays
-                    // for "haircut_names" and "color_names" (as suggested in previous answer)
                     JSONObject jsonResponse = new JSONObject(result);
-
-                    // Check for general failure status from PHP
                     if ("fail".equals(jsonResponse.optString("status"))) {
                         Toast.makeText(HairstyleConfirm.this, jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
                         return;
@@ -289,8 +276,6 @@ public class HairstyleConfirm extends AppCompatActivity {
 
                     haircutNames.clear();
                     haircutColors.clear();
-
-                    // Using the expected key names from the fixed PHP script
                     JSONArray namesArray = jsonResponse.optJSONArray("haircut_names");
                     JSONArray colorsArray = jsonResponse.optJSONArray("color_names");
 
@@ -326,7 +311,6 @@ public class HairstyleConfirm extends AppCompatActivity {
     }
 
     private class FetchBarbersTask extends AsyncTask<String, Void, String> {
-        // Corrected onPostExecute logic for barbers only
         @Override
         protected String doInBackground(String... params) {
             String shopID = params[0];
@@ -358,12 +342,12 @@ public class HairstyleConfirm extends AppCompatActivity {
         }
     }
 
-    // MOVED: This class was incorrectly nested inside FetchBarbersTask
+    @SuppressLint("StaticFieldLeak")
     private class CheckActiveAppointmentTask extends AsyncTask<Void, Void, String> {
-        private final String customername;
-        private final String branch, haircut, color, barber, dateTime;
+        private final String customername, branch, haircut, color, barber, dateTime;
 
-        CheckActiveAppointmentTask(String customername, String branch, String haircut, String color, String barber, String dateTime) {
+        CheckActiveAppointmentTask(String customername, String branch, String haircut,
+                                   String color, String barber, String dateTime) {
             this.customername = customername;
             this.branch = branch;
             this.haircut = haircut;
@@ -381,7 +365,6 @@ public class HairstyleConfirm extends AppCompatActivity {
             postData.put("color", color);
             postData.put("barber", barber);
             postData.put("dateTime", dateTime);
-
             return fetchData(BASE_URL + "check_active_appointment.php", postData);
         }
 
@@ -395,7 +378,7 @@ public class HairstyleConfirm extends AppCompatActivity {
 
                     if ("exists".equals(status)) {
                         new AlertDialog.Builder(HairstyleConfirm.this)
-                                .setTitle("Appointment Exists")
+                                .setTitle("\uD83D\uDEA8 Appointment Exists \uD83D\uDEA8")
                                 .setMessage(message)
                                 .setPositiveButton("OK", null)
                                 .show();
@@ -418,7 +401,8 @@ public class HairstyleConfirm extends AppCompatActivity {
     private class SaveAppointmentTask extends AsyncTask<Void, Void, String> {
         private final String customername, haircut, color, date, timeslot, branch, barber;
 
-        SaveAppointmentTask(String customername, String haircut, String color, String date, String timeslot, String branch, String barber) {
+        SaveAppointmentTask(String customername, String haircut, String color,
+                            String date, String timeslot, String branch, String barber) {
             this.customername = customername;
             this.haircut = haircut;
             this.color = color;
@@ -450,13 +434,16 @@ public class HairstyleConfirm extends AppCompatActivity {
                     String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
+                    Toast.makeText(HairstyleConfirm.this, message, Toast.LENGTH_LONG).show();
+
                     if ("success".equals(status)) {
-                        Toast.makeText(HairstyleConfirm.this, message, Toast.LENGTH_LONG).show();
-                        // Optional: Navigate away or finish the activity after success
-                        // finish();
-                    } else {
-                        Toast.makeText(HairstyleConfirm.this, message, Toast.LENGTH_LONG).show();
+                        // Go back to HomepageActivity
+                        Intent intent = new Intent(HairstyleConfirm.this, HomepageActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
                     }
+
                 } catch (JSONException e) {
                     Log.e("SaveAppointmentTask", "JSON parsing error: " + e.getMessage());
                     Toast.makeText(HairstyleConfirm.this, "Error processing server response.", Toast.LENGTH_SHORT).show();

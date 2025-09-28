@@ -14,13 +14,12 @@
         android:src="@drawable/bg3"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
-        android:contentDescription="Background"
+        android:contentDescription="@null"
         android:alpha="0.9"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/return_button"

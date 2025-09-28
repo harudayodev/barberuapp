@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/queue"
@@ -7,20 +8,21 @@
     android:layout_height="match_parent"
     tools:context=".AppointmentActivity">
 
+    <!-- Background Image -->
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/bg3"
         android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-        android:contentDescription="@null"
         android:alpha="0.9"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="ContentDescription" />
 
+    <!-- Return Button -->
     <ImageView
         android:id="@+id/return_button"
         android:layout_width="48dp"
@@ -28,40 +30,55 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Return"
         android:src="@drawable/arrowreturn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText" />
+        tools:ignore="ContentDescription" />
 
+    <!-- Page Title -->
     <TextView
         android:id="@+id/page_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="BARBERU QUEUE"
         android:textColor="@color/white"
         android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/return_button"
+        app:layout_constraintBottom_toBottomOf="@id/return_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/return_button"
+        app:layout_constraintTop_toTopOf="@id/return_button"
         tools:ignore="HardcodedText,TextContrastCheck" />
 
+    <!-- Queue Status (dynamic) -->
     <TextView
         android:id="@+id/queue_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="It's your turn!"
+        android:layout_marginTop="18dp"
+        android:text="Your Appointment"
         android:textColor="@color/white"
-        android:textSize="35sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/page_title"
         tools:ignore="HardcodedText,TextContrastCheck" />
 
+    <TextView
+        android:id="@+id/queue_message_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Your queue number is 0"
+        android:textColor="@color/vibrantorange"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/queue_status_text"
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
+    <!-- No Appointment Text -->
     <TextView
         android:id="@+id/no_appointment_text"
         android:layout_width="wrap_content"
@@ -77,6 +94,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText" />
 
+    <!-- Queue Info Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/queue_info_card"
         android:layout_width="0dp"
@@ -87,9 +105,9 @@
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/queue_message_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/queue_status_text">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,58 +115,74 @@
             android:orientation="vertical"
             android:padding="24dp">
 
+            <!-- Queue Number -->
             <TextView
                 android:id="@+id/queue_number_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:text="Your Queue Number"
                 android:textColor="@color/black"
                 android:textSize="20sp"
+                android:layout_gravity="center_horizontal"
+                android:textStyle="bold"
                 tools:ignore="HardcodedText" />
-
             <TextView
                 android:id="@+id/queue_number_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
                 android:text="0"
                 android:textColor="@color/black"
                 android:textSize="60sp"
                 android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                tools:ignore="HardcodedText" />
+
+            <!-- Dynamic Turn Message -->
+            <TextView
+                android:id="@+id/queue_turn_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not your turn yet"
+                android:textColor="@color/vibrantorange"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
                 tools:ignore="HardcodedText" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_marginBottom="16dp"/>
 
+            <!-- Booking Details -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="Booking Details"
-                android:layout_gravity="center_horizontal"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
                 tools:ignore="HardcodedText" />
 
+            <!-- Customer & Haircut Info -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Customer:"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/customername"
@@ -164,22 +198,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Haircut:"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/haircutname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Haircut Name"
+                    android:text="Classic"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     tools:ignore="HardcodedText" />
@@ -188,39 +222,40 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Haircut Color:"
+                    android:text="Color:"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/haircutcolorname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Haircut Name"
+                    android:text="Brown"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     tools:ignore="HardcodedText" />
             </LinearLayout>
 
+            <!-- Date & Time -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Date:"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/date_value"
@@ -236,15 +271,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Time Slot:"
+                    android:text="Time:"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/time_of_issue_value"
@@ -257,25 +292,26 @@
                     tools:ignore="HardcodedText" />
             </LinearLayout>
 
+            <!-- Branch & Barber -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Branch:"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/branchname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Main Street Barber"
+                    android:text="Main Street"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     tools:ignore="HardcodedText" />
@@ -284,15 +320,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Barber:"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/barbername"
@@ -305,38 +340,38 @@
                     tools:ignore="HardcodedText" />
             </LinearLayout>
 
-
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Cancel Button -->
     <Button
         android:id="@+id/cancel_queue_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginTop="12dp"
         android:backgroundTint="@color/vibrantorange"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
         android:text="Cancel Queue"
         android:textColor="@color/white"
         android:textSize="20sp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         app:cornerRadius="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/queue_info_card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText,VisualLintButtonSize" />
 
+    <!-- Home Bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/homebar"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:background="@color/espresso"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/homeview"
@@ -344,9 +379,9 @@
             android:layout_height="40dp"
             android:src="@drawable/home"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="ContentDescription" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,9 +1,11 @@
 package com.example.barberuapplication;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,7 +42,22 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
         setContentView(R.layout.activity_adminqueue); // Assuming you used the suggested XML name 'activity_admin_queue'
 
         // Assume adminID is stored in SharedPreferences after login
-        adminID = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("adminID", -1);
+        int employeeID = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("employeeID", -1);
+
+        ImageView returnButton = findViewById(R.id.return_button);
+        ImageView homeButton   = findViewById(R.id.homeview);
+
+        returnButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminQueue.this, HomepageAdmin.class);
+            startActivity(intent);
+            finish();
+        });
+
+        homeButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminQueue.this, HomepageAdmin.class);
+            startActivity(intent);
+            finish();
+        });
 
         if (adminID == -1) {
             Toast.makeText(this, "Admin ID not found. Please log in.", Toast.LENGTH_LONG).show();
@@ -58,7 +75,7 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
         // Set up the return button (or other navigation)
         findViewById(R.id.return_button).setOnClickListener(v -> finish());
 
-        new FetchQueueTask().execute(String.valueOf(adminID));
+        new FetchQueueTask().execute(String.valueOf(employeeID));
     }
 
     @Override
@@ -141,10 +158,11 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
         protected String doInBackground(String... params) {
             String adminId = params[0];
             Map<String, String> postData = new HashMap<>();
-            postData.put("adminID", adminId);
+            postData.put("employeeID", adminId);
             return fetchData(BASE_URL + "get_admin_queue.php", postData);
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
@@ -156,14 +174,17 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
                         for (int i = 0; i < queueArray.length(); i++) {
                             JSONObject item = queueArray.getJSONObject(i);
 
-                            int id = item.getInt("queueID");
+                            int id = item.getInt("QueueID");
                             String name = item.getString("name");
                             String barber = item.getString("barber");
                             String dateTime = item.getString("date_time");
                             String haircutName = item.getString("Haircut_Name");
-                            String haircutColor = item.getString("Haircut_Color");
+                            String colorName = item.optString("Color_Name", "");
 
-                            queueList.add(new QueueItem(id, name, barber, dateTime, haircutName, haircutColor));
+                            queueList.add(new QueueItem(id, name, barber, dateTime, haircutName, colorName));
+
+
+                            queueList.add(new QueueItem(id, name, barber, dateTime, haircutName, colorName));
                         }
                         adapter.notifyDataSetChanged();
                         if (queueList.isEmpty()) {
@@ -186,6 +207,14 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
         }
     }
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(AdminQueue.this, HomepageAdmin.class);
+        startActivity(intent);
+        finish();
+    }
+
     @SuppressLint("StaticFieldLeak")
     private class UpdateQueueStatusTask extends AsyncTask<Void, Void, String> {
         private final int queueID;
@@ -206,6 +235,7 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
             return fetchData(BASE_URL + "update_queue_status.php", postData);
         }
 
+
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
@@ -224,6 +254,8 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
             } else {
                 Toast.makeText(AdminQueue.this, "Server error during status update.", Toast.LENGTH_SHORT).show();
             }
+
+
         }
     }
 }

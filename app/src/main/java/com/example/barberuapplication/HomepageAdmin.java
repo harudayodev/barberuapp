@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -25,17 +26,18 @@ public class HomepageAdmin extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_homepageadmin); // ✅ fixed
+        setContentView(R.layout.activity_homepageadmin);
 
         ImageView logoutIcon = findViewById(R.id.logoutbutton);
-
+        TextView shopNameText = findViewById(R.id.shopname);
         TextView usernameText = findViewById(R.id.username);
+
         allcat = findViewById(R.id.allcat);
         toolscat = findViewById(R.id.toolscat);
         toolsContainer = findViewById(R.id.tools_container);
-
         categoryTabs = new TextView[]{allcat, toolscat};
 
+        // ✅ Get fullname
         String fullname = getIntent().getStringExtra("fullname");
         if (fullname == null || fullname.trim().isEmpty()) {
             fullname = getSharedPreferences("UserPrefs", MODE_PRIVATE)
@@ -43,12 +45,43 @@ public class HomepageAdmin extends AppCompatActivity {
         }
         usernameText.setText(fullname);
 
+        // ✅ Get shop name directly from login response (or SharedPreferences)
+        String shopName = getIntent().getStringExtra("shop_name");
+        if (shopName == null || shopName.trim().isEmpty()) {
+            shopName = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                    .getString("shop_name", "");
+        }
+        if (shopName != null && !shopName.isEmpty()) {
+            shopNameText.setText("of " + shopName);
+        } else {
+            shopNameText.setText("");
+        }
+
         ImageView settingsIcon = findViewById(R.id.settingsIcon);
         ImageView queueIcon = findViewById(R.id.queuelogo);
         ImageView feedbackIcon = findViewById(R.id.feedbacklogo);
         ImageView homeIcon = findViewById(R.id.homeview);
-        ImageView mapIcon = findViewById(R.id.maplogo); // ✅ fixed
+        ImageView mapIcon = findViewById(R.id.maplogo);
         ImageView aboutIcon = findViewById(R.id.aboutlogo);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                new AlertDialog.Builder(HomepageAdmin.this)
+                        .setTitle("Logout")
+                        .setMessage("Are you sure you want to log out?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            Intent intent = new Intent(HomepageAdmin.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .show();
+            }
+        });
 
         logoutIcon.setOnClickListener(v -> {
             new AlertDialog.Builder(HomepageAdmin.this)
@@ -64,9 +97,9 @@ public class HomepageAdmin extends AppCompatActivity {
                     .show();
         });
 
+        // ✅ Category tabs
         allcat.setOnClickListener(v -> showAll());
         toolscat.setOnClickListener(v -> showTools());
-
         showAll();
 
         String finalFullname = fullname;

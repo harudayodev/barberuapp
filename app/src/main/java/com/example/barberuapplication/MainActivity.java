@@ -78,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             dbHelper.loginUser(email, password, (status, message, data) -> {
-                Log.d("LoginActivity", "Login Result: " + status + " - " + message);
-
                 if ("success".equalsIgnoreCase(status)) {
                     int userId = data.optInt("id", 0);
                     String fname = data.optString("firstname", "");
@@ -88,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
                     String role = data.optString("role", "user");
 
                     String employeeId = data.optString("employee_id", null);
+                    String shopId = data.optString("shop_id", null);
+                    String shopName = data.optString("shop_name", null);
 
                     getSharedPreferences("UserPrefs", MODE_PRIVATE)
                             .edit()
@@ -95,19 +95,22 @@ public class MainActivity extends AppCompatActivity {
                             .putString("fullname", fullname)
                             .putString("role", role)
                             .putString("employee_id", employeeId)
+                            .putString("shop_id", shopId)
+                            .putString("shop_name", shopName)
                             .apply();
 
                     Intent intent;
                     if ("admin".equalsIgnoreCase(role)) {
                         intent = new Intent(MainActivity.this, HomepageAdmin.class);
                         intent.putExtra("employee_id", employeeId);
+                        intent.putExtra("shop_id", shopId);
+                        intent.putExtra("shop_name", shopName);
                     } else {
                         intent = new Intent(MainActivity.this, HomepageActivity.class);
                     }
                     intent.putExtra("fullname", fullname);
                     startActivity(intent);
                     finish();
-
                 } else {
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                 }

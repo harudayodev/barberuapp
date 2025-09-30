@@ -58,7 +58,7 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 new AlertDialog.Builder(HomepageActivity.this)
-                        .setTitle("Logout and Exit")
+                        .setTitle("Logout")
                         .setMessage("Are you sure you want to log out?")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             Intent intent = new Intent(HomepageActivity.this, MainActivity.class);

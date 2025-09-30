@@ -107,19 +107,25 @@ public class HairstyleConfirm extends AppCompatActivity {
                         showTimePickerDialog(selectedYear, selectedMonth, selectedDay),
                 year, month, day);
 
-        // Prevent selecting past dates
         datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
 
         datePickerDialog.show();
     }
 
     private void showTimePickerDialog(int year, int month, int day) {
-        final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
+        // Default to 8:00 AM
+        int hour = 8;
+        int minute = 0;
 
         @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, selectedHour, selectedMinute) -> {
+                    // Check if within 8AM - 4PM
+                    if (selectedHour < 8 || selectedHour > 16 || (selectedHour == 16 && selectedMinute > 0)) {
+                        Toast.makeText(this, "Please select a time between 8:00 AM and 4:00 PM", Toast.LENGTH_SHORT).show();
+                        showTimePickerDialog(year, month, day); // reopen picker
+                        return;
+                    }
+
                     Calendar selectedDateTime = Calendar.getInstance();
                     selectedDateTime.set(year, month, day, selectedHour, selectedMinute);
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -127,6 +133,7 @@ public class HairstyleConfirm extends AppCompatActivity {
                     datetimePicker.setText(dateFormatter.format(selectedDateTime.getTime()) + " " +
                             timeFormatter.format(selectedDateTime.getTime()));
                 }, hour, minute, false);
+
         timePickerDialog.show();
     }
 

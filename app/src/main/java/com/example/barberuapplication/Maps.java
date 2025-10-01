@@ -1,8 +1,8 @@
 package com.example.barberuapplication;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -23,6 +23,8 @@ import java.util.Map;
 public class Maps extends AppCompatActivity {
 
     private ZoomableImageView zoomableImageView;
+    private Button resetButton, goToButton;
+    private String currentShopLink = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,8 @@ public class Maps extends AppCompatActivity {
         ImageView homebutton = findViewById(R.id.homeview);
         View mapBorder = findViewById(R.id.map_border);
         zoomableImageView = findViewById(R.id.mapactual);
-        Button resetButton = findViewById(R.id.reset_button);
+        resetButton = findViewById(R.id.reset_button);
+        goToButton = findViewById(R.id.go_to_button);
 
         Animation pulsingAnimation = AnimationUtils.loadAnimation(this, R.anim.pulsing_border);
         mapBorder.startAnimation(pulsingAnimation);
@@ -59,6 +62,7 @@ public class Maps extends AppCompatActivity {
                 "17. JIM'S Barbershop"
         );
 
+        // --- Coordinates
         Map<String, PointF> shopCoordinates = new HashMap<>();
         shopCoordinates.put("1. Kwentong Barbero Balanga", new PointF(7100, 2240));
         shopCoordinates.put("2. Jhun/Dels Barbershop", new PointF(7500, 3180));
@@ -78,43 +82,82 @@ public class Maps extends AppCompatActivity {
         shopCoordinates.put("16. Fel's Barbershop and Hanniielytie II Beaut&Wellness", new PointF(2850,3970));
         shopCoordinates.put("17. JIM'S Barbershop", new PointF(2015,4050));
 
+        // --- Links -->
+        Map<String, String> shopLinks = new HashMap<>();
+        shopLinks.put("1. Kwentong Barbero Balanga", "https://maps.app.goo.gl/zD8HUgL7pxjsZAFW7");
+        shopLinks.put("2. Jhun/Dels Barbershop", "https://maps.app.goo.gl/vJJ7UU8oFSS16dGN6");
+        shopLinks.put("3. Mando's Barbershop", "https://maps.app.goo.gl/ve7UBi7aPaSakDZE8");
+        shopLinks.put("4. Thrifty haircuts", "https://maps.app.goo.gl/yMPtzDhfFqpbPceA7");
+        shopLinks.put("5. Daddy O.G Barbershop Salon Nail Spa", "https://maps.app.goo.gl/QHNzAuNPMY5zkh5x6");
+        shopLinks.put("6. Creatures Barbershop", "https://maps.app.goo.gl/TRsb7xcpA9WoK1cF7");
+        shopLinks.put("7. Tonyo's Barbershop", "https://maps.app.goo.gl/L8kGAuLawy9Kxh6C7");
+        shopLinks.put("8. Daniel's Jack de Salon", "https://maps.app.goo.gl/TDe7z2afoUgGPXd99");
+        shopLinks.put("9. Cuts x Kicks by Antonio", "https://maps.app.goo.gl/8p5xPkRv2AviEM7Y9");
+        shopLinks.put("10. Pilyo Barbershop", "https://maps.app.goo.gl/4emaSuVdNw76JpWU8");
+        shopLinks.put("11. Pinuno Elite Barbershop", "https://maps.app.goo.gl/ddyboLBY4Dv1L6jh8");
+        shopLinks.put("12. Jovercel Barbershop", "https://maps.app.goo.gl/tZcnGRyKuTRkYSvh9");
+        shopLinks.put("13. Black Sparrow Barbershop", "https://maps.app.goo.gl/NQtcQvih6L2fxAE26");
+        shopLinks.put("14. GWAPO Barbershop and Coffee", "https://maps.app.goo.gl/b3gafr4JENzneedY6");
+        shopLinks.put("15. ADST Barbershop", "https://maps.app.goo.gl/pVcQJ2s39HTsSh1W7");
+        shopLinks.put("16. Fel's Barbershop and Hanniielytie II Beaut&Wellness", "https://maps.app.goo.gl/uzsKZELLH62MQ7vLA");
+        shopLinks.put("17. JIM'S Barbershop", "https://maps.app.goo.gl/ojQDjShbNwaP7y2x6");
 
+        // --- RecyclerView setup
         RecyclerView recyclerView = findViewById(R.id.barbershop_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         BarbershopAdapter adapter = new BarbershopAdapter(barbershops, name -> {
+            // Pan to shop coordinates
             PointF targetPoint = shopCoordinates.get(name);
             if (targetPoint != null) {
                 zoomableImageView.panTo(targetPoint);
             }
+
+            // Enable Go To button with link
+            currentShopLink = shopLinks.get(name);
+            if (currentShopLink != null) {
+                goToButton.setEnabled(true);
+                goToButton.setAlpha(1f);
+            }
         });
         recyclerView.setAdapter(adapter);
 
-        resetButton.setOnClickListener(v -> zoomableImageView.resetView());
+        // --- Reset button
+        resetButton.setOnClickListener(v -> {
+            zoomableImageView.resetView();
+            // Disable Go To button
+            currentShopLink = null;
+            goToButton.setEnabled(false);
+            goToButton.setAlpha(0.5f);
+        });
 
-        returnbutton.setOnClickListener(v -> {
-            String role = getIntent().getStringExtra("role");
-            if ("admin".equals(role)) {
-                Intent intent = new Intent(Maps.this, HomepageAdmin.class);
+        // --- Go To button
+        goToButton.setOnClickListener(v -> {
+            if (currentShopLink != null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentShopLink));
                 startActivity(intent);
-                finish();
-            } else {
-                Intent intent = new Intent(Maps.this, HomepageActivity.class);
-                startActivity(intent);
-                finish();
             }
         });
 
+        // --- Return button
+        returnbutton.setOnClickListener(v -> {
+            String role = getIntent().getStringExtra("role");
+            if ("admin".equals(role)) {
+                startActivity(new Intent(Maps.this, HomepageAdmin.class));
+            } else {
+                startActivity(new Intent(Maps.this, HomepageActivity.class));
+            }
+            finish();
+        });
+
+        // --- Home button
         homebutton.setOnClickListener(v -> {
             String role = getIntent().getStringExtra("role");
             if ("admin".equals(role)) {
-                Intent intent = new Intent(Maps.this, HomepageAdmin.class);
-                startActivity(intent);
-                finish();
+                startActivity(new Intent(Maps.this, HomepageAdmin.class));
             } else {
-                Intent intent = new Intent(Maps.this, HomepageActivity.class);
-                startActivity(intent);
-                finish();
+                startActivity(new Intent(Maps.this, HomepageActivity.class));
             }
+            finish();
         });
     }
 }

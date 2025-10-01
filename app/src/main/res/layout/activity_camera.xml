@@ -8,7 +8,6 @@
     android:background="@color/hotorange"
     tools:context=".CameraActivity">
 
-    <!-- Return button -->
     <ImageButton
         android:id="@+id/return_button"
         android:layout_width="48dp"
@@ -117,7 +116,6 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Bottom buttons -->
     <LinearLayout
         android:id="@+id/button_container"
         android:layout_width="0dp"

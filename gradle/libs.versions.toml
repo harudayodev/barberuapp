@@ -46,4 +46,3 @@ camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.r
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

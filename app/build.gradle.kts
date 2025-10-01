@@ -35,14 +35,12 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
-    implementation(libs.assets)
     implementation(libs.firebase.auth)
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)
@@ -55,5 +53,4 @@ dependencies {
     implementation(libs.circleimageview)
     implementation(libs.face.detection)
     implementation(libs.flexbox)
-
 }

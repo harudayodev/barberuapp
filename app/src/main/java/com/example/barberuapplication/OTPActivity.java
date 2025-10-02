@@ -4,18 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText; // Import EditText
-import android.widget.ImageView;
-import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.text.Editable; // Import Editable
 import android.text.TextWatcher; // Import TextWatcher
 import android.view.inputmethod.InputMethodManager;

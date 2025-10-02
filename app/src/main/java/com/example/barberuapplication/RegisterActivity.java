@@ -10,12 +10,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONObject;
-
 public class RegisterActivity extends AppCompatActivity {
 
     EditText fnameInput, lnameInput, emailInput, passwordInput, confirmpassInput;
-    Button registerBtn;
+    Button registerBtn, returnBtn;
     TextView signInText;
     CheckBox termsCheckbox;
     DbHelper dbHelper;
@@ -32,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         confirmpassInput = findViewById(R.id.conpassword_input);
         registerBtn = findViewById(R.id.register_b);
         signInText = findViewById(R.id.signInText);
+        returnBtn = findViewById(R.id.return_btn);
         termsCheckbox = findViewById(R.id.terms_checkbox);
         dbHelper = new DbHelper();
 
@@ -80,6 +79,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         signInText.setOnClickListener(v -> {
             startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+            finish();
+        });
+
+        returnBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+            startActivity(intent);
             finish();
         });
     }

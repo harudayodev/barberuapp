@@ -23,7 +23,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
@@ -51,7 +50,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CameraActivity extends AppCompatActivity {
+public class Camera extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private Bitmap capturedBitmap = null;
@@ -131,7 +130,7 @@ public class CameraActivity extends AppCompatActivity {
                 saveImageToGallery(capturedBitmap);
             }
 
-            Intent intent = new Intent(CameraActivity.this, HairstyleConfirm.class);
+            Intent intent = new Intent(Camera.this, HairstyleConfirm.class);
             intent.putExtra("customername", customerName);
             startActivity(intent);
         });
@@ -152,7 +151,7 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         returnButton.setOnClickListener(v -> {
-            Intent intent = new Intent(CameraActivity.this, HomepageActivity.class);
+            Intent intent = new Intent(Camera.this, HomepageActivity.class);
             startActivity(intent);
             finish();
         });
@@ -212,7 +211,7 @@ public class CameraActivity extends AppCompatActivity {
                         .build();
                 imageAnalysis.setAnalyzer(cameraExecutor, this::analyzeImage);
 
-                Camera camera = cameraProvider.bindToLifecycle(
+                androidx.camera.core.Camera camera = cameraProvider.bindToLifecycle(
                         (LifecycleOwner) this,
                         cameraSelector,
                         preview,
@@ -360,7 +359,7 @@ public class CameraActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
-                        Toast.makeText(CameraActivity.this,
+                        Toast.makeText(Camera.this,
                                 "Capture failed: " + exception.getMessage(),
                                 Toast.LENGTH_SHORT).show();
                     }

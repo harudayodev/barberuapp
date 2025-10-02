@@ -47,7 +47,7 @@ public class HomepageActivity extends AppCompatActivity {
         ImageView settingsIcon = findViewById(R.id.settingsIcon);
         ImageView apppointIcon = findViewById(R.id.appointlogo);
         ImageView hairstyleIcon = findViewById(R.id.haircutlogo);
-        ImageView reviewIcon = findViewById(R.id.ratinglogo);
+        ImageView ratingIcon = findViewById(R.id.ratinglogo);
         ImageView homeIcon = findViewById(R.id.homeview);
         ImageView mapIcon = findViewById(R.id.mapslogo);
         ImageView favIcon = findViewById(R.id.favoritelogo);
@@ -112,12 +112,12 @@ public class HomepageActivity extends AppCompatActivity {
         });
 
         hairstyleIcon.setOnClickListener(v -> {
-            Intent hairstyleview = new Intent(HomepageActivity.this, CameraActivity.class);
+            Intent hairstyleview = new Intent(HomepageActivity.this, Camera.class);
             startActivity(hairstyleview);
         });
 
-        reviewIcon.setOnClickListener(v -> {
-            Intent ratingview = new Intent(HomepageActivity.this, ReviewActivity.class);
+        ratingIcon.setOnClickListener(v -> {
+            Intent ratingview = new Intent(HomepageActivity.this, Rating.class);
             startActivity(ratingview);
         });
 

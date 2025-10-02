@@ -1,32 +1,33 @@
 package com.example.barberuapplication;
 
 public class HistoryItem {
-    private String queueNumber;
-    private String customerName;
-    private String serviceName;
+    private int id;
+    private String haircutName;
+    private String colorName;
     private String barberName;
     private String price;
-    private String date;
-    private String timeslot;
+    private String dateTime;
     private String status;
 
-    public HistoryItem(String queueNumber, String customerName, String serviceName, String barberName, String price, String date, String timeslot, String status) {
-        this.queueNumber = queueNumber;
-        this.customerName = customerName;
-        this.serviceName = serviceName;
+    public HistoryItem(int id, String haircutName, String colorName, String barberName,
+                       String price, String dateTime, String status) {
+        this.id = id;
+        this.haircutName = haircutName;
+        this.colorName = colorName;
         this.barberName = barberName;
         this.price = price;
-        this.date = date;
-        this.timeslot = timeslot;
+        this.dateTime = dateTime;
         this.status = status;
     }
 
-    public String getQueueNumber() { return queueNumber; }
-    public String getCustomerName() { return customerName; }
-    public String getServiceName() { return serviceName; }
+    public int getId() {
+        return id;
+    }
+
+    public String getHaircutName() { return haircutName; }
+    public String getColorName() { return colorName; }
     public String getBarberName() { return barberName; }
     public String getPrice() { return price; }
-    public String getDate() { return date; }
-    public String getTimeslot() { return timeslot; }
+    public String getDateTime() { return dateTime; }
     public String getStatus() { return status; }
 }

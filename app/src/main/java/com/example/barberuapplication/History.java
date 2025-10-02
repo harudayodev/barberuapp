@@ -43,12 +43,7 @@ public class History extends AppCompatActivity {
         ImageView retbutton = findViewById(R.id.return_button);
         ImageView homebutton = findViewById(R.id.homeview);
 
-        retbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        retbutton.setOnClickListener(v -> finish());
 
         homebutton.setOnClickListener(v -> {
             Intent intent = new Intent(History.this, HomepageActivity.class);
@@ -116,7 +111,7 @@ public class History extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (result != null) {
+            if (result != null && !result.startsWith("Error:")) { // Added check for network error prefix
                 try {
                     JSONObject jsonResponse = new JSONObject(result);
                     String status = jsonResponse.getString("status");
@@ -126,28 +121,34 @@ public class History extends AppCompatActivity {
                         JSONArray historyArray = jsonResponse.getJSONArray("history");
                         for (int i = 0; i < historyArray.length(); i++) {
                             JSONObject appointment = historyArray.getJSONObject(i);
-                            String queueNumber = appointment.getString("queueNumber");
-                            String customerName = appointment.getString("customerName");
-                            String serviceName = appointment.getString("serviceName");
-                            String barberName = appointment.getString("barberName");
-                            String price = appointment.getString("price");
-                            String date = appointment.getString("date");
-                            String timeslot = appointment.getString("timeslot");
-                            String statusText = appointment.getString("Status");
 
-                            historyList.add(new HistoryItem(queueNumber, customerName, serviceName, barberName, price, date, timeslot, statusText));
+                            // IMPORTANT SAFETY CHANGES: Using optString for resilience
+                            int id = appointment.getInt("id");
+                            String haircutName = appointment.getString("haircutName");
+                            String colorName = appointment.optString("colorName", "None"); // Default to "None"
+                            String barberName = appointment.optString("barberName", "N/A"); // Default to "N/A"
+                            String price = appointment.optString("price", "0.00"); // Safest option for price
+                            String dateTime = appointment.getString("dateTime");
+                            String statusText = appointment.getString("status");
+
+                            historyList.add(new HistoryItem(
+                                    id, haircutName, colorName, barberName, price, dateTime, statusText
+                            ));
                         }
                         historyAdapter = new HistoryAdapter(historyList);
                         historyRecyclerView.setAdapter(historyAdapter);
                     } else {
-                        Toast.makeText(History.this, "No past appointments found.", Toast.LENGTH_SHORT).show();
+                        historyRecyclerView.setVisibility(View.GONE);
+                        Toast.makeText(History.this,
+                                "No appointment history yet.", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
-                    Log.e("FetchHistoryTask", "JSON parsing error: " + e.getMessage());
-                    Toast.makeText(History.this, "Error parsing history data.", Toast.LENGTH_SHORT).show();
+                    Log.e("FetchHistoryTask", "JSON parsing error: " + e.getMessage() + ". Data: " + result); // Log the result data for better debugging
+                    Toast.makeText(History.this, "Error parsing history data.", Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(History.this, "Failed to connect to server.", Toast.LENGTH_SHORT).show();
+                Log.e("FetchHistoryTask", "Server/Network Error: " + (result != null ? result : "Null result"));
+                Toast.makeText(History.this, "Failed to connect to server or network error.", Toast.LENGTH_LONG).show();
             }
         }
     }

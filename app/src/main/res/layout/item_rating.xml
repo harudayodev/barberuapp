@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardElevation="6dp"
+    app:cardCornerRadius="16dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title row with arrow -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            tools:ignore="UseCompoundDrawables">
+
+            <TextView
+                android:id="@+id/haircut_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fade Cut"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/arrow_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_down"
+                android:contentDescription="Expand/Collapse arrow"
+                app:tint="@color/black"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <!-- Expandable layout -->
+        <LinearLayout
+            android:id="@+id/rating_details_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/color_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Color: None"
+                android:textSize="14sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginTop="2dp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/barber_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Barber: John Doe"
+                android:textSize="14sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginTop="2dp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/date_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date: 2025-09-30"
+                android:textSize="13sp"
+                android:textColor="@color/gray"
+                android:layout_marginTop="2dp"
+                tools:ignore="HardcodedText" />
+
+            <!-- Rating Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
+
+                <RatingBar
+                    android:id="@+id/rating_stars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:rating="0"
+                    android:isIndicator="false"
+                    style="?android:attr/ratingBarStyleIndicator" />
+
+                <TextView
+                    android:id="@+id/rating_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/review_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Write a review..."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:background="@drawable/edittext_bg"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:maxLines="5"
+                tools:ignore="Autofill,HardcodedText" />
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/submit_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit Rating"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"
+                android:padding="12dp"
+                android:backgroundTint="@color/espresso"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

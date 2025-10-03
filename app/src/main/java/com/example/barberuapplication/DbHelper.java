@@ -47,7 +47,7 @@ public class DbHelper {
         protected String doInBackground(Void... voids) {
             HttpURLConnection conn = null;
             try {
-                URL url = new URL("http://192.168.100.10/barberuapp/register.php");
+                URL url = new URL(Config.BASE_URL + "register.php");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
@@ -112,7 +112,7 @@ public class DbHelper {
         protected String doInBackground(Void... voids) {
             HttpURLConnection conn = null;
             try {
-                URL url = new URL("http://192.168.100.10/barberuapp/login.php");
+                URL url = new URL(Config.BASE_URL + "login.php");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);

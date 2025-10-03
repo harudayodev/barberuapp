@@ -21,7 +21,7 @@ public class HomepageAdmin extends AppCompatActivity {
     private TextView allcat, toolscat;
     private TextView[] categoryTabs;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

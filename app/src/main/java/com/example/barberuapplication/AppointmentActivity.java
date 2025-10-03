@@ -162,7 +162,7 @@ public class AppointmentActivity extends AppCompatActivity {
             String result = "";
             HttpURLConnection conn = null;
             try {
-                URL url = new URL("http://192.168.100.10/barberuapp/get_appointment.php");
+                URL url = new URL(Config.BASE_URL + "get_appointment.php");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
@@ -307,7 +307,7 @@ public class AppointmentActivity extends AppCompatActivity {
             String result = "";
             HttpURLConnection conn = null;
             try {
-                URL url = new URL("http://192.168.100.10/barberuapp/cancel_appointment.php");
+                URL url = new URL(Config.BASE_URL + "cancel_appointment.php");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);

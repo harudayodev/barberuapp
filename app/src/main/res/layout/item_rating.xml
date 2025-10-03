@@ -100,7 +100,10 @@
                     android:stepSize="0.5"
                     android:rating="0"
                     android:isIndicator="false"
-                    style="?android:attr/ratingBarStyleIndicator" />
+                    style="?android:attr/ratingBarStyleIndicator"
+                    android:progressTint="@android:color/holo_orange_light"
+                    android:secondaryProgressTint="@android:color/holo_orange_light"
+                    android:backgroundTint="@android:color/darker_gray" />
 
                 <TextView
                     android:id="@+id/rating_value"

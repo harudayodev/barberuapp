@@ -85,9 +85,10 @@ public class MainActivity extends AppCompatActivity {
                     String shopId = data.optString("shop_id", null);
                     String shopName = data.optString("shop_name", null);
 
+                    // ⭐ CRITICAL FIX: Changed key from "id" to "userID"
                     getSharedPreferences("UserPrefs", MODE_PRIVATE)
                             .edit()
-                            .putInt("id", userId)
+                            .putInt("userID", userId) // <-- This now matches RatingAdapter.java
                             .putString("fullname", fullname)
                             .putString("role", role)
                             .putString("employee_id", employeeId)

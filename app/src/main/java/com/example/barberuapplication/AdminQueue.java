@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.OnActionButtonClickListener {
 
-    private static final String BASE_URL = "http://192.168.100.10/barberuapp/";
+    private static final String BASE_URL = Config.BASE_URL;
     private RecyclerView recyclerView;
     private AdminQueueAdapter adapter;
     private List<QueueItem> queueList;

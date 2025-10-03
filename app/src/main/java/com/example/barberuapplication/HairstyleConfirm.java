@@ -42,7 +42,7 @@ import java.util.Map;
 
 public class HairstyleConfirm extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://192.168.100.10/barberuapp/";
+    private static final String BASE_URL = Config.BASE_URL;
     private ImageView returnButton;
     private TextView customerNameInput;
     private Spinner haircutNameInput, haircutColorInput, branchInput, barberInput;

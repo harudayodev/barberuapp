@@ -72,7 +72,7 @@ public class History extends AppCompatActivity {
             String result = "";
             HttpURLConnection conn = null;
             try {
-                URL url = new URL("http://192.168.100.10/barberuapp/get_history.php");
+                URL url = new URL(Config.BASE_URL + "get_history.php");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);

@@ -99,7 +99,7 @@ public class Settings extends AppCompatActivity {
             @Override
             protected String doInBackground(Void... voids) {
                 try {
-                    URL url = new URL("http://192.168.100.10/barberuapp/editprofile.php");
+                    URL url = new URL(Config.BASE_URL + "editprofile.php");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     conn.setDoOutput(true);
@@ -196,7 +196,7 @@ public class Settings extends AppCompatActivity {
             @Override
             protected String doInBackground(Void... voids) {
                 try {
-                    URL url = new URL("http://192.168.100.10/barberuapp/changepassword.php");
+                    URL url = new URL(Config.BASE_URL + "changepassword.php");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     conn.setDoOutput(true);

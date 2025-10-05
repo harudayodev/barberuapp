@@ -94,13 +94,13 @@
 
                 <RatingBar
                     android:id="@+id/rating_stars"
+                    style="?android:attr/ratingBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:numStars="5"
                     android:stepSize="0.5"
                     android:rating="0"
                     android:isIndicator="false"
-                    style="?android:attr/ratingBarStyleIndicator"
                     android:progressTint="@android:color/holo_orange_light"
                     android:secondaryProgressTint="@android:color/holo_orange_light"
                     android:backgroundTint="@android:color/darker_gray" />

@@ -1,17 +1,17 @@
 package com.example.barberuapplication;
 
 public class HistoryItem {
-    private int id;
-    private String haircutName;
-    private String colorName;
-    private String barberName;
-    private String price;
-    private String dateTime;
-    private String status;
+    private final int shopID; // actual shopID
+    private final String haircutName;
+    private final String colorName;
+    private final String barberName;
+    private final String price;
+    private final String dateTime;
+    private final String status;
 
-    public HistoryItem(int id, String haircutName, String colorName, String barberName,
+    public HistoryItem(int shopID, String haircutName, String colorName, String barberName,
                        String price, String dateTime, String status) {
-        this.id = id;
+        this.shopID = shopID;
         this.haircutName = haircutName;
         this.colorName = colorName;
         this.barberName = barberName;
@@ -20,10 +20,7 @@ public class HistoryItem {
         this.status = status;
     }
 
-    public int getId() {
-        return id;
-    }
-
+    public int getShopID() { return shopID; }
     public String getHaircutName() { return haircutName; }
     public String getColorName() { return colorName; }
     public String getBarberName() { return barberName; }

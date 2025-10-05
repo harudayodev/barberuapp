@@ -40,9 +40,9 @@ public class AppointmentActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "appointment_channel";
 
-    private TextView customerNameTextView, haircutNameTextView, haircutColorNameTextView, dateValueTextView,
-            timeValueTextView, branchNameTextView, barberNameTextView, queueStatusText, queueNumberValueTextView,
-            queueTurnMessage, queueMessageTextView, noAppointmentText;
+    private TextView customerNameTextView, haircutNameTextView, haircutColorNameTextView, shaveNameTextView,
+            dateValueTextView, timeValueTextView, branchNameTextView, barberNameTextView, queueStatusText,
+            queueNumberValueTextView, queueTurnMessage, queueMessageTextView, noAppointmentText;
     private View queueInfoCard;
     private Button cancelButton;
     private Handler handler = new Handler();
@@ -70,6 +70,7 @@ public class AppointmentActivity extends AppCompatActivity {
         customerNameTextView = findViewById(R.id.customername);
         haircutNameTextView = findViewById(R.id.haircutname);
         haircutColorNameTextView = findViewById(R.id.haircutcolorname);
+        shaveNameTextView = findViewById(R.id.shavename);
         dateValueTextView = findViewById(R.id.date_value);
         timeValueTextView = findViewById(R.id.time_of_issue_value);
         branchNameTextView = findViewById(R.id.branchname);
@@ -217,6 +218,7 @@ public class AppointmentActivity extends AppCompatActivity {
                         customerNameTextView.setText(customername);
                         haircutNameTextView.setText(appointment.optString("Haircut_Name", "N/A"));
                         haircutColorNameTextView.setText(appointment.optString("Color_Name", "N/A"));
+                        shaveNameTextView.setText(appointment.optString("Shave_Name", "N/A"));
                         dateValueTextView.setText(appointment.optString("date", "N/A"));
 
                         // Format timeslot

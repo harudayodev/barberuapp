@@ -38,6 +38,8 @@ public class ZoomableImageView extends AppCompatImageView {
 
     private boolean isInitialized = false;
 
+
+
     public ZoomableImageView(Context context) {
         super(context);
         init(context);
@@ -138,11 +140,14 @@ public class ZoomableImageView extends AppCompatImageView {
         });
     }
 
+
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         fitImageToView();
     }
+
 
     private void fitImageToView() {
         if (getDrawable() == null || isInitialized) return;
@@ -209,6 +214,8 @@ public class ZoomableImageView extends AppCompatImageView {
 
         return true;
     }
+
+
 
     private void fixTranslation() {
         RectF bounds = getMatrixRect();

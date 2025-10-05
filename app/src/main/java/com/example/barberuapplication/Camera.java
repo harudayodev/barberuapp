@@ -1,54 +1,44 @@
 package com.example.barberuapplication;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.ImageFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.view.animation.RotateAnimation;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
-import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
-import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.face.Face;
-import com.google.mlkit.vision.face.FaceDetection;
-import com.google.mlkit.vision.face.FaceDetector;
-import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Camera extends AppCompatActivity {
 
@@ -56,26 +46,40 @@ public class Camera extends AppCompatActivity {
     private Bitmap capturedBitmap = null;
 
     private PreviewView previewView;
-    private ImageView capturedImageView, filterOverlay;
+    private MovableResizableFilter filterOverlay;
+    private ImageView capturedImageView;
     private Button captureButton, retakeButton, nextButton;
     private ImageButton rotateButton, returnButton;
-    private HorizontalScrollView filtersScrollView;
-    private ImageView filter1, filter2, filter3, filter4;
+    private RecyclerView filtersRecycler;
+
+    // --- New Button Declaration ---
+    private ImageButton resetButton;
+    // ------------------------------
 
     private ImageCapture imageCapture;
-    private FaceDetector faceDetector;
-    private ExecutorService cameraExecutor;
     private CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
 
     private int selectedFilterId = 0;
     private String customerName;
 
-    private YuvToRgbConverter yuvToRgbConverter;
+    private final int[] filterRes = {
+            R.drawable.hair1, // short hair
+            R.drawable.hair4, // wavy hair left
+            R.drawable.hair5, // wavy hair right
+            R.drawable.hair3, // curly
+            R.drawable.hair2, // messy/other style
+            R.drawable.hair6,
+            R.drawable.hair7,
+            R.drawable.hair8,
+            R.drawable.hair9,
+            R.drawable.hair10
+    };
 
+
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_camera);
 
         previewView = findViewById(R.id.previewView);
@@ -85,24 +89,15 @@ public class Camera extends AppCompatActivity {
         nextButton = findViewById(R.id.next_button);
         rotateButton = findViewById(R.id.rotate_button);
         returnButton = findViewById(R.id.return_button);
-        filtersScrollView = findViewById(R.id.filters_scroll_view);
         filterOverlay = findViewById(R.id.filter_overlay);
-        filter1 = findViewById(R.id.filter1);
-        filter2 = findViewById(R.id.filter2);
-        filter3 = findViewById(R.id.filter3);
-        filter4 = findViewById(R.id.filter4);
+        filtersRecycler = findViewById(R.id.filters_recycler);
 
-        FaceDetectorOptions options = new FaceDetectorOptions.Builder()
-                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-                .enableTracking()
-                .build();
-        faceDetector = FaceDetection.getClient(options);
+        // --- Initialize New Button ---
+        resetButton = findViewById(R.id.reset_button);
+        // -----------------------------
 
-        cameraExecutor = Executors.newSingleThreadExecutor();
         customerName = getIntent().getStringExtra("fullname");
         if (customerName == null) customerName = "Guest";
-
-        yuvToRgbConverter = new YuvToRgbConverter(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -113,37 +108,85 @@ public class Camera extends AppCompatActivity {
             startCamera();
         }
 
+        setupFilterRecycler();
+        setupButtonClickListeners();
+    }
+
+    private void setupFilterRecycler() {
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        filtersRecycler.setLayoutManager(layoutManager);
+
+        FilterAdapter adapter = new FilterAdapter(filterRes, (resId, position) -> {
+            if (selectedFilterId == resId) {
+                // Deselect filter
+                selectedFilterId = 0;
+                filterOverlay.setVisibility(View.GONE);
+                resetButton.setVisibility(View.GONE); // Hide the reset button
+                ((FilterAdapter) filtersRecycler.getAdapter()).setSelectedPosition(RecyclerView.NO_POSITION);
+            } else {
+                // Select new filter
+                selectedFilterId = resId;
+                filterOverlay.setImageResource(resId);
+                filterOverlay.setVisibility(View.VISIBLE);
+                resetButton.setVisibility(View.VISIBLE); // Show the reset button
+
+                // Reset position and scale to original
+                resetFilterPosition();
+
+                ((FilterAdapter) filtersRecycler.getAdapter()).setSelectedPosition(position);
+            }
+        });
+        filtersRecycler.setAdapter(adapter);
+    }
+
+    // --- New method to reset filter position and size ---
+    private void resetFilterPosition() {
+        filterOverlay.post(() -> {
+            int previewWidth = previewView.getWidth();
+            int previewHeight = previewView.getHeight();
+            int filterWidth = filterOverlay.getWidth();
+            int filterHeight = filterOverlay.getHeight();
+
+            // Reset scale to default
+            filterOverlay.setScaleX(1.0f);
+            filterOverlay.setScaleY(1.0f);
+
+            // Recalculate and set the center position
+            filterOverlay.setX((previewWidth - filterWidth) / 2f);
+            filterOverlay.setY((previewHeight - filterHeight) / 2f);
+        });
+    }
+    // ----------------------------------------------------
+
+    private void setupButtonClickListeners() {
         captureButton.setOnClickListener(v -> takePhoto());
+
         retakeButton.setOnClickListener(v -> {
-            capturedImageView.setVisibility(ImageView.GONE);
-            previewView.setVisibility(PreviewView.VISIBLE);
-            retakeButton.setVisibility(Button.GONE);
-            nextButton.setVisibility(Button.GONE);
-            captureButton.setVisibility(Button.VISIBLE);
-            rotateButton.setVisibility(ImageButton.VISIBLE);
-            returnButton.setVisibility(ImageButton.VISIBLE);
-            filtersScrollView.setVisibility(HorizontalScrollView.VISIBLE);
+            capturedImageView.setVisibility(View.GONE);
+            previewView.setVisibility(View.VISIBLE);
+            if (selectedFilterId != 0) {
+                filterOverlay.setVisibility(View.VISIBLE);
+                resetButton.setVisibility(View.VISIBLE); // Show reset button on retake
+            }
+            retakeButton.setVisibility(View.GONE);
+            nextButton.setVisibility(View.GONE);
+            captureButton.setVisibility(View.VISIBLE);
+            rotateButton.setVisibility(View.VISIBLE);
+            returnButton.setVisibility(View.VISIBLE);
+            filtersRecycler.setVisibility(View.VISIBLE);
         });
 
         nextButton.setOnClickListener(v -> {
             if (capturedBitmap != null) {
                 saveImageToGallery(capturedBitmap);
             }
-
             Intent intent = new Intent(Camera.this, HairstyleConfirm.class);
             intent.putExtra("customername", customerName);
             startActivity(intent);
         });
 
         rotateButton.setOnClickListener(v -> {
-            RotateAnimation rotateAnimation = new RotateAnimation(
-                    0, 180,
-                    RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                    RotateAnimation.RELATIVE_TO_SELF, 0.5f
-            );
-            rotateAnimation.setDuration(500);
-            v.startAnimation(rotateAnimation);
-
             cameraSelector = (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
                     ? CameraSelector.DEFAULT_FRONT_CAMERA
                     : CameraSelector.DEFAULT_BACK_CAMERA;
@@ -156,40 +199,12 @@ public class Camera extends AppCompatActivity {
             finish();
         });
 
-        filter1.setOnClickListener(v -> handleFilterClick(v.getId()));
-        filter2.setOnClickListener(v -> handleFilterClick(v.getId()));
-        filter3.setOnClickListener(v -> handleFilterClick(v.getId()));
-        filter4.setOnClickListener(v -> handleFilterClick(v.getId()));
-    }
-
-    private void saveImageToGallery(Bitmap bitmap) {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.MediaColumns.DISPLAY_NAME,
-                new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()));
-        values.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
-
-        Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        try (OutputStream out = getContentResolver().openOutputStream(uri)) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            Toast.makeText(this, "Image saved!", Toast.LENGTH_SHORT).show();  // 🔥 updated message
-        } catch (Exception e) {
-            Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void handleFilterClick(int filterId) {
-        if (selectedFilterId == filterId) {
-            selectedFilterId = 0;
-            filterOverlay.setVisibility(ImageView.GONE);
-            Toast.makeText(this, "Filter deselected.", Toast.LENGTH_SHORT).show();
-        } else {
-            selectedFilterId = filterId;
-            filterOverlay.setVisibility(ImageView.VISIBLE);
-            if (filterId == R.id.filter1) {
-                filterOverlay.setImageResource(R.drawable.hair);
-            }
-        }
+        // --- New Button Listener ---
+        resetButton.setOnClickListener(v -> {
+            resetFilterPosition();
+            Toast.makeText(Camera.this, "Filter reset", Toast.LENGTH_SHORT).show();
+        });
+        // ---------------------------
     }
 
     private void startCamera() {
@@ -201,23 +216,18 @@ public class Camera extends AppCompatActivity {
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                 cameraProvider.unbindAll();
 
-                Preview preview = new Preview.Builder().build();
+                androidx.camera.core.Preview preview = new androidx.camera.core.Preview.Builder().build();
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
                 imageCapture = new ImageCapture.Builder().build();
 
-                ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                        .build();
-                imageAnalysis.setAnalyzer(cameraExecutor, this::analyzeImage);
-
-                androidx.camera.core.Camera camera = cameraProvider.bindToLifecycle(
-                        (LifecycleOwner) this,
-                        cameraSelector,
-                        preview,
-                        imageCapture,
-                        imageAnalysis
-                );
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
+                if (selectedFilterId != 0) {
+                    filterOverlay.setVisibility(View.VISIBLE);
+                    resetButton.setVisibility(View.VISIBLE);
+                } else {
+                    resetButton.setVisibility(View.GONE);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -225,136 +235,48 @@ public class Camera extends AppCompatActivity {
         }, ContextCompat.getMainExecutor(this));
     }
 
-    private void analyzeImage(ImageProxy imageProxy) {
-        @SuppressWarnings("UnsafeOptInUsageError")
-        InputImage inputImage =
-                InputImage.fromMediaImage(imageProxy.getImage(), imageProxy.getImageInfo().getRotationDegrees());
-
-        int frameWidth = imageProxy.getWidth();
-        int frameHeight = imageProxy.getHeight();
-
-        faceDetector.process(inputImage)
-                .addOnSuccessListener(faces -> {
-                    if (!faces.isEmpty() && selectedFilterId != 0) {
-                        runOnUiThread(() -> updateFilterOverlay(faces.get(0), frameWidth, frameHeight));
-                    } else {
-                        runOnUiThread(() -> filterOverlay.setVisibility(ImageView.GONE));
-                    }
-                    imageProxy.close();
-                })
-                .addOnFailureListener(e -> {
-                    imageProxy.close();
-                });
-    }
-
-    private float[] mapImageCoordinatesToView(float x, float y, int imageWidth, int imageHeight) {
-        int viewWidth = previewView.getWidth();
-        int viewHeight = previewView.getHeight();
-
-        float scaleX = (float) viewWidth / imageWidth;
-        float scaleY = (float) viewHeight / imageHeight;
-
-        float scaleFactor = Math.min(scaleX, scaleY);
-
-        float offsetX = (viewWidth - imageWidth * scaleFactor) / 2.0f;
-        float offsetY = (viewHeight - imageHeight * scaleFactor) / 2.0f;
-
-        float mappedX = x * scaleFactor + offsetX;
-        float mappedY = y * scaleFactor + offsetY;
-
-        return new float[]{mappedX, mappedY};
-    }
-
-    private void updateFilterOverlay(Face face, int imageWidth, int imageHeight) {
-        int faceBoundingBoxWidth = face.getBoundingBox().width();
-        int faceBoundingBoxHeight = face.getBoundingBox().height();
-
-        float desiredOverlayWidth = faceBoundingBoxWidth * 1.6f;
-        float desiredOverlayHeight = faceBoundingBoxHeight * 0.8f;
-
-        float frameX = face.getBoundingBox().centerX() - desiredOverlayWidth / 2f;
-        float frameY = face.getBoundingBox().top - (faceBoundingBoxHeight * 0.25f);
-
-        float[] mappedTopLeft = mapImageCoordinatesToView(frameX, frameY, imageWidth, imageHeight);
-        float[] mappedBottomRight = mapImageCoordinatesToView(
-                frameX + desiredOverlayWidth,
-                frameY + desiredOverlayHeight,
-                imageWidth,
-                imageHeight
-        );
-
-        float mappedX = mappedTopLeft[0];
-        float mappedY = mappedTopLeft[1];
-        int mappedWidth = (int) (mappedBottomRight[0] - mappedTopLeft[0]);
-        int mappedHeight = (int) (mappedBottomRight[1] - mappedTopLeft[1]);
-
-        filterOverlay.setVisibility(ImageView.VISIBLE);
-
-        filterOverlay.getLayoutParams().width = mappedWidth;
-        filterOverlay.getLayoutParams().height = mappedHeight;
-        filterOverlay.requestLayout();
-
-        filterOverlay.setX(mappedX);
-        filterOverlay.setY(mappedY);
-
-        if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-            float mirroredX = previewView.getWidth() - (mappedX + mappedWidth);
-            filterOverlay.setX(mirroredX);
-        } else {
-            filterOverlay.setX(mappedX);
-        }
-        filterOverlay.setY(mappedY);
-
-        float rotation = face.getHeadEulerAngleZ();
-        if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-            rotation = -rotation;
-        }
-        filterOverlay.setRotation(rotation);
-    }
-
     private void takePhoto() {
         if (imageCapture == null) return;
 
-        imageCapture.takePicture(
-                ContextCompat.getMainExecutor(this),
+        imageCapture.takePicture(ContextCompat.getMainExecutor(this),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy imageProxy) {
                         Bitmap bitmap = imageProxyToBitmap(imageProxy);
+                        imageProxy.close();
 
-                        // Get the rotation from the ImageProxy
-                        int rotationDegrees = imageProxy.getImageInfo().getRotationDegrees();
                         Matrix matrix = new Matrix();
+                        // Apply rotation from camera sensor
+                        matrix.postRotate(imageProxy.getImageInfo().getRotationDegrees());
 
-                        // Apply rotation to the bitmap
-                        matrix.postRotate(rotationDegrees);
-
-                        // Mirror the image for the front camera
+                        // Flip the image horizontally if the front camera was used to match the preview.
                         if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-                            matrix.postScale(-1f, 1f);
+                            matrix.postScale(-1f, 1f, bitmap.getWidth() / 2f, bitmap.getHeight() / 2f);
                         }
 
-                        // Create the final, correctly oriented bitmap
-                        Bitmap finalBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                                bitmap.getWidth(), bitmap.getHeight(),
-                                matrix, true);
+                        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                                bitmap.getHeight(), matrix, true);
 
-                        capturedBitmap = finalBitmap;
+                        // **FIX 1: CROP THE BITMAP TO MATCH THE PREVIEW'S ASPECT RATIO**
+                        Bitmap croppedBitmap = cropToMatchPreview(rotatedBitmap);
+
+                        // **FIX 2: MERGE WITH OVERLAY**
+                        capturedBitmap = mergeWithOverlay(croppedBitmap);
 
                         runOnUiThread(() -> {
-                            previewView.setVisibility(PreviewView.GONE);
-                            capturedImageView.setVisibility(ImageView.VISIBLE);
-                            capturedImageView.setImageBitmap(finalBitmap);
+                            previewView.setVisibility(View.GONE);
+                            filterOverlay.setVisibility(View.GONE);
+                            resetButton.setVisibility(View.GONE); // Hide the reset button after capture
+                            capturedImageView.setVisibility(View.VISIBLE);
+                            capturedImageView.setImageBitmap(capturedBitmap);
 
-                            captureButton.setVisibility(Button.GONE);
-                            rotateButton.setVisibility(ImageButton.GONE);
-                            returnButton.setVisibility(ImageButton.GONE);
-                            filtersScrollView.setVisibility(HorizontalScrollView.GONE);
-                            retakeButton.setVisibility(Button.VISIBLE);
-                            nextButton.setVisibility(Button.VISIBLE);
+                            captureButton.setVisibility(View.GONE);
+                            rotateButton.setVisibility(View.GONE);
+                            returnButton.setVisibility(View.GONE);
+                            filtersRecycler.setVisibility(View.GONE);
+                            retakeButton.setVisibility(View.VISIBLE);
+                            nextButton.setVisibility(View.VISIBLE);
                         });
-
-                        imageProxy.close();
                     }
 
                     @Override
@@ -363,32 +285,101 @@ public class Camera extends AppCompatActivity {
                                 "Capture failed: " + exception.getMessage(),
                                 Toast.LENGTH_SHORT).show();
                     }
-                }
-        );
+                });
     }
 
-    private Bitmap imageProxyToBitmap(ImageProxy image) {
-        if (image.getFormat() == ImageFormat.JPEG) {
-            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes);
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        } else {
-            Bitmap bitmap = Bitmap.createBitmap(
-                    image.getWidth(),
-                    image.getHeight(),
-                    Bitmap.Config.ARGB_8888
-            );
-            yuvToRgbConverter.yuvToRgb(image, bitmap);
-            return bitmap;
+    private Bitmap cropToMatchPreview(Bitmap photo) {
+        int photoWidth = photo.getWidth();
+        int photoHeight = photo.getHeight();
+        float photoRatio = (float) photoWidth / photoHeight;
+
+        int previewWidth = previewView.getWidth();
+        int previewHeight = previewView.getHeight();
+        float previewRatio = (float) previewWidth / previewHeight;
+
+        int newWidth = photoWidth;
+        int newHeight = photoHeight;
+        int startX = 0;
+        int startY = 0;
+
+        if (photoRatio > previewRatio) {
+            newWidth = (int) (photoHeight * previewRatio);
+            startX = (photoWidth - newWidth) / 2;
+        } else if (previewRatio > photoRatio) {
+            newHeight = (int) (photoWidth / previewRatio);
+            startY = (photoHeight - newHeight) / 2;
+        }
+
+        return Bitmap.createBitmap(photo, startX, startY, newWidth, newHeight);
+    }
+
+    private Bitmap mergeWithOverlay(Bitmap photo) {
+        if (selectedFilterId == 0) {
+            return photo;
+        }
+
+        Bitmap filterBitmap = BitmapFactory.decodeResource(getResources(), selectedFilterId);
+
+        int photoWidth = photo.getWidth();
+        int photoHeight = photo.getHeight();
+
+        float overlayX = filterOverlay.getX();
+        float overlayY = filterOverlay.getY();
+        float overlayW = filterOverlay.getWidth() * filterOverlay.getScaleX();
+        float overlayH = filterOverlay.getHeight() * filterOverlay.getScaleY();
+
+        int previewWidth = previewView.getWidth();
+        int previewHeight = previewView.getHeight();
+
+        float scaleX = (float) photoWidth / previewWidth;
+        float scaleY = (float) photoHeight / previewHeight;
+
+        float newFilterX = overlayX * scaleX;
+        float newFilterY = overlayY * scaleY;
+        float newFilterW = overlayW * scaleX;
+        float newFilterH = overlayH * scaleY;
+
+        Bitmap scaledFilter = Bitmap.createScaledBitmap(
+                filterBitmap,
+                Math.round(newFilterW),
+                Math.round(newFilterH),
+                true
+        );
+
+        Bitmap result = Bitmap.createBitmap(photoWidth, photoHeight, photo.getConfig());
+        Canvas canvas = new Canvas(result);
+
+        canvas.drawBitmap(photo, 0, 0, null);
+        canvas.drawBitmap(scaledFilter, newFilterX, newFilterY, null);
+
+        return result;
+    }
+
+    private void saveImageToGallery(Bitmap bitmap) {
+        String fileName = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()) + ".jpg";
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+        values.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+
+        Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        if (uri != null) {
+            try (OutputStream out = getContentResolver().openOutputStream(uri)) {
+                if (out != null) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    Toast.makeText(this, "Image saved!", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (faceDetector != null) faceDetector.close();
-        if (cameraExecutor != null) cameraExecutor.shutdown();
+    private Bitmap imageProxyToBitmap(ImageProxy image) {
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
     @Override
@@ -402,39 +393,6 @@ public class Camera extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Camera permission denied.", Toast.LENGTH_LONG).show();
             }
-        }
-    }
-    static class YuvToRgbConverter {
-        private final android.renderscript.RenderScript rs;
-        private final android.renderscript.ScriptIntrinsicYuvToRGB yuvToRgbIntrinsic;
-        private android.renderscript.Allocation in, out;
-        private android.renderscript.Type.Builder yuvType, rgbaType;
-
-        public YuvToRgbConverter(Context context) {
-            rs = android.renderscript.RenderScript.create(context);
-            yuvToRgbIntrinsic = android.renderscript.ScriptIntrinsicYuvToRGB.create(rs, android.renderscript.Element.U8(rs));
-        }
-
-        public void yuvToRgb(ImageProxy image, Bitmap output) {
-            ByteBuffer yuvBuffer = image.getPlanes()[0].getBuffer();
-            byte[] yuvBytes = new byte[yuvBuffer.remaining()];
-            yuvBuffer.get(yuvBytes);
-
-            if (yuvType == null) {
-                yuvType = new android.renderscript.Type.Builder(rs, android.renderscript.Element.U8(rs))
-                        .setX(yuvBytes.length);
-                in = android.renderscript.Allocation.createTyped(rs, yuvType.create(), android.renderscript.Allocation.USAGE_SCRIPT);
-
-                rgbaType = new android.renderscript.Type.Builder(rs, android.renderscript.Element.RGBA_8888(rs))
-                        .setX(image.getWidth())
-                        .setY(image.getHeight());
-                out = android.renderscript.Allocation.createTyped(rs, rgbaType.create(), android.renderscript.Allocation.USAGE_SCRIPT);
-            }
-
-            in.copyFrom(yuvBytes);
-            yuvToRgbIntrinsic.setInput(in);
-            yuvToRgbIntrinsic.forEach(out);
-            out.copyTo(output);
         }
     }
 }

@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-feature
-        android:name="android.hardware.camera.any"
-        android:required="true" />
-
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,7 +10,11 @@
         tools:ignore="CoarseFineLocation" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -25,7 +25,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BarberuApplication"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+        tools:targetApi="35"> <meta-data android:name="com.google.ar.core" android:value="required" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBPdy7Gr5FEIYxu63JM5bljUqbBEVpZwzc" />
+
         <activity
             android:name=".Rating"
             android:exported="false" />
@@ -35,11 +40,13 @@
         <activity
             android:name=".History"
             android:exported="false" />
+
         <activity
             android:name=".Camera"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
         <activity
             android:name=".OTPActivity"
             android:exported="false" />
@@ -83,14 +90,8 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBPdy7Gr5FEIYxu63JM5bljUqbBEVpZwzc" />
     </application>
-
 </manifest>

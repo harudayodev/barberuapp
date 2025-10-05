@@ -2,29 +2,17 @@ package com.example.barberuapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.view.animation.Transformation;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.view.*;
+import android.view.animation.*;
+import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.content.ContextCompat; // Import for color tint
 
 import java.util.List;
 
-// Implement the listener in the adapter to handle the callback
 public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingViewHolder>
-        implements SubmitReviewTask.ReviewSubmitListener { // Implementing here for simple access to Context
+        implements SubmitReviewTask.ReviewSubmitListener {
 
     private final Context context;
     private final List<HistoryItem> completedList;
@@ -41,41 +29,67 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         return new RatingViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
+    // In RatingAdapter.java
+
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     public void onBindViewHolder(@NonNull RatingViewHolder holder, int position) {
         HistoryItem item = completedList.get(position);
-
-        final int salesID = item.getId();
-
-        // ⭐ Add a tag to the ViewHolder's submit button so we can find it in the listener
-        holder.submitButton.setTag(position);
+        final int shopID = item.getShopID();
+        String status = item.getStatus();
 
         holder.haircutName.setText(item.getHaircutName());
-        holder.colorName.setText("Color: " + (item.getColorName() == null ? "None" : item.getColorName()));
+        holder.colorName.setText("Color: " + item.getColorName());
         holder.barberName.setText("Barber: " + item.getBarberName());
         holder.dateValue.setText("Date: " + item.getDateTime());
 
-        // Reset state (assuming no persistent check for submitted reviews)
-        // If a review has already been submitted for this salesID, you need to update
-        // HistoryItem and fetch that status/rating from the server in Rating.java
+        // --- Handle Cancelled ---
+        if ("cancelled".equalsIgnoreCase(status)) {
+            holder.ratingDetailsLayout.setVisibility(View.GONE);
+            holder.submitButton.setVisibility(View.GONE);
+            holder.reviewText.setVisibility(View.GONE);
+            holder.arrowIcon.setVisibility(View.GONE);
 
-        // ⭐ INITIAL/RESET STATE: Enable rating/submission
+            holder.haircutName.setText(item.getHaircutName() + " (Cancelled)");
+            int gray = ContextCompat.getColor(context, android.R.color.darker_gray);
+            holder.haircutName.setTextColor(gray);
+            holder.colorName.setTextColor(gray);
+            holder.barberName.setTextColor(gray);
+            holder.dateValue.setTextColor(gray);
+            holder.itemView.setAlpha(0.6f);
+            return; // Exit here for cancelled items
+        }
+
+        // --- Completed items (reviewable) ---
+        holder.itemView.setAlpha(1f);
+        holder.ratingDetailsLayout.setVisibility(View.VISIBLE);
+        holder.ratingStars.setVisibility(View.VISIBLE);
+        holder.reviewText.setVisibility(View.VISIBLE);
+        holder.submitButton.setVisibility(View.VISIBLE);
+        holder.arrowIcon.setVisibility(View.VISIBLE);
+
         holder.ratingStars.setRating(0f);
-        holder.ratingStars.setIsIndicator(false); // Make stars editable
+        holder.ratingValue.setText("0.0"); // Reset text view
         holder.reviewText.setText("");
-        holder.reviewText.setEnabled(true);
         holder.submitButton.setText("Submit Rating");
         holder.submitButton.setEnabled(true);
-        // Reset background tint (You'll need to define @color/espresso in your resources)
         holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.espresso));
 
+        // ******************** MOVED THE LISTENER HERE ********************
+        // This listener updates the TextView whenever the user changes the star rating.
+        holder.ratingStars.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            if (fromUser) {
+                holder.ratingValue.setText(String.format("%.1f", rating));
+            }
+        });
+        // *****************************************************************
 
+        // Toggle expansion
         View.OnClickListener toggleListener = v -> toggleExpand(holder);
         holder.haircutName.setOnClickListener(toggleListener);
         holder.arrowIcon.setOnClickListener(toggleListener);
 
-        // Submit rating button
+        // Submit rating
         holder.submitButton.setOnClickListener(v -> {
             float stars = holder.ratingStars.getRating();
             String reviewText = holder.reviewText.getText().toString().trim();
@@ -89,15 +103,12 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
                     .getInt("userID", 0);
 
             if (userID == 0) {
-                Toast.makeText(context, "Error: User not logged in (userID not found).", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Error: User not logged in.", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // ⭐ Pass 'this' (the adapter) as the listener
-            new SubmitReviewTask(context, userID, salesID, stars, reviewText,
-                    // Anonymous implementation of the listener to handle the result
+            new SubmitReviewTask(context, userID, shopID, stars, reviewText,
                     (success, submittedStars, submittedReviewContent) -> {
-                        // Call the method to handle UI updates on the specific item
                         if (v.getTag() instanceof Integer && (Integer) v.getTag() == position) {
                             handleReviewSubmissionUI(holder, success, submittedStars, submittedReviewContent);
                         }
@@ -106,80 +117,58 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
             holder.submitButton.setEnabled(false);
             Toast.makeText(context, "Submitting review...", Toast.LENGTH_SHORT).show();
         });
-
-        // Allow click on stars to update immediately
-        holder.ratingStars.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-            if (fromUser) holder.ratingStars.setRating(rating);
-        });
     }
 
-    // ⭐ New method to handle the UI changes after submission
     @SuppressLint("SetTextI18n")
     private void handleReviewSubmissionUI(RatingViewHolder holder, boolean success, float stars, String reviewContent) {
         if (success) {
-            // 1. Set stars to stay
             holder.ratingStars.setRating(stars);
-            holder.ratingStars.setIsIndicator(true); // Make stars uneditable/indicator-only
-
-            // 2. Display short review and make uneditable
+            holder.ratingStars.setIsIndicator(true);
             holder.reviewText.setText(reviewContent);
             holder.reviewText.setEnabled(false);
-
-            // 3. Dim out and rename submit button
             holder.submitButton.setText("Review Submitted");
             holder.submitButton.setEnabled(false);
-            // You will need to define @color/gray or R.attr.colorButtonNormal in your resources
             holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.darker_gray));
-
         } else {
-            // Re-enable the button on failure so the user can try again
-            holder.submitButton.setEnabled(true);
+            // Keep button enabled UNLESS it's a duplicate review
+            if (reviewContent.contains("already submitted")) {
+                holder.submitButton.setText("Already Reviewed");
+                holder.submitButton.setEnabled(false);
+                holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.darker_gray));
+            } else {
+                holder.submitButton.setEnabled(true);
+            }
         }
     }
 
-    // The implementation of the interface method is now handled inline in onBindViewHolder
-    // to correctly reference the specific ViewHolder's UI elements.
-    // The below is technically not needed since we used an anonymous inner class,
-    // but kept here for completeness if you prefer a class-level implementation:
     @Override
     public void onReviewSubmitted(boolean success, float stars, String reviewContent) {
-        // This global method is difficult to use in a RecyclerView,
-        // as it doesn't know which item submitted the review.
-        // We handle the UI update directly in the OnClickListener's callback above.
     }
-
 
     @Override
     public int getItemCount() {
         return completedList.size();
     }
 
-    // [Helper methods (toggleExpand, expand, collapse, rotateArrow) and
-    // RatingViewHolder remain unchanged and are omitted for brevity.]
-    // -------------------- Helper Methods --------------------
     private void toggleExpand(RatingViewHolder holder) {
         boolean isExpanded = holder.ratingDetailsLayout.getVisibility() == View.VISIBLE;
         if (isExpanded) {
             collapse(holder.ratingDetailsLayout);
-            rotateArrow(holder.arrowIcon, 180f, 0f);
         } else {
             expand(holder.ratingDetailsLayout);
-            rotateArrow(holder.arrowIcon, 0f, 180f);
         }
     }
 
     private void expand(final View v) {
         v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final int targetHeight = v.getMeasuredHeight();
-
         v.getLayoutParams().height = 0;
         v.setVisibility(View.VISIBLE);
         Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
+                v.getLayoutParams().height =
+                        interpolatedTime == 1 ? ViewGroup.LayoutParams.WRAP_CONTENT : (int) (targetHeight * interpolatedTime);
                 v.requestLayout();
             }
         };
@@ -189,7 +178,6 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
 
     private void collapse(final View v) {
         final int initialHeight = v.getMeasuredHeight();
-
         Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
@@ -205,21 +193,8 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         v.startAnimation(a);
     }
 
-    private void rotateArrow(ImageView arrow, float from, float to) {
-        RotateAnimation rotate = new RotateAnimation(
-                from, to,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f
-        );
-        rotate.setDuration(300);
-        rotate.setFillAfter(true);
-        arrow.startAnimation(rotate);
-    }
-
-    // -------------------- ViewHolder --------------------
-
     public static class RatingViewHolder extends RecyclerView.ViewHolder {
-        TextView haircutName, colorName, barberName, dateValue;
+        TextView haircutName, colorName, barberName, dateValue, ratingValue;
         RatingBar ratingStars;
         EditText reviewText;
         Button submitButton;
@@ -237,6 +212,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
             submitButton = itemView.findViewById(R.id.submit_review);
             ratingDetailsLayout = itemView.findViewById(R.id.rating_details_layout);
             arrowIcon = itemView.findViewById(R.id.arrow_icon);
+            ratingValue = itemView.findViewById(R.id.rating_value);
         }
     }
 }

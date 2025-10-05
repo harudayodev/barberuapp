@@ -14,8 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 public class ResetPassActivity extends AppCompatActivity {
 
     private EditText emailInput;
-    private Button sendEmailButton;
-    private ImageView backButton;
+    private Button sendEmailButton, returnButton;
     private ConstraintLayout modalOverlay;
     private Button modalDismissButton;
 
@@ -29,12 +28,12 @@ public class ResetPassActivity extends AppCompatActivity {
         // Get references to UI elements
         emailInput = findViewById(R.id.email_input);
         sendEmailButton = findViewById(R.id.send_email_button);
-        backButton = findViewById(R.id.back_button);
+        returnButton = findViewById(R.id.return_btn);
         modalOverlay = findViewById(R.id.modal_overlay);
         modalDismissButton = findViewById(R.id.modal_dismiss_button);
 
         // Set up click listener for the back button
-        backButton.setOnClickListener(new View.OnClickListener() {
+        returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish(); // Close the activity and go back

@@ -3,6 +3,7 @@ package com.example.barberuapplication;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences; // Import SharedPreferences
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;

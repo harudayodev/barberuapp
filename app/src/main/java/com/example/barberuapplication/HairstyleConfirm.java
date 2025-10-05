@@ -45,7 +45,7 @@ public class HairstyleConfirm extends AppCompatActivity {
     private static final String BASE_URL = Config.BASE_URL;
     private ImageView returnButton;
     private TextView customerNameInput;
-    private Spinner haircutNameInput, haircutColorInput, branchInput, barberInput;
+    private Spinner haircutNameInput, haircutColorInput, shaveInput, branchInput, barberInput;
     private List<String> haircutNames = new ArrayList<>();
     private List<String> haircutColors = new ArrayList<>();
     private TextView datetimePicker;
@@ -65,6 +65,7 @@ public class HairstyleConfirm extends AppCompatActivity {
         haircutColorInput = findViewById(R.id.haircut_color_input);
         branchInput = findViewById(R.id.branch_input);
         barberInput = findViewById(R.id.barber_input);
+        shaveInput = findViewById(R.id.shave_input);
         datetimePicker = findViewById(R.id.datetime_picker);
         confirmButton = findViewById(R.id.confirm_button);
 
@@ -113,21 +114,42 @@ public class HairstyleConfirm extends AppCompatActivity {
     }
 
     private void showTimePickerDialog(int year, int month, int day) {
-        // Default to 8:00 AM
+        final Calendar now = Calendar.getInstance();
+        final Calendar selectedDate = Calendar.getInstance();
+        selectedDate.set(year, month, day);
+
+        // Default time 8:00 AM
         int hour = 8;
         int minute = 0;
 
+        // If the selected date is today, default to next available hour/minute
+        if (isToday(selectedDate)) {
+            hour = now.get(Calendar.HOUR_OF_DAY);
+            minute = now.get(Calendar.MINUTE) + 1; // +1 minute to avoid immediate past
+            if (hour < 8) hour = 8;
+            if (hour > 16) hour = 16;
+            if (hour == 16) minute = 0; // max 4:00 PM
+        }
+
         @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, selectedHour, selectedMinute) -> {
-                    // Check if within 8AM - 4PM
+                    // Check working hours
                     if (selectedHour < 8 || selectedHour > 16 || (selectedHour == 16 && selectedMinute > 0)) {
                         Toast.makeText(this, "Please select a time between 8:00 AM and 4:00 PM", Toast.LENGTH_SHORT).show();
-                        showTimePickerDialog(year, month, day); // reopen picker
+                        showTimePickerDialog(year, month, day);
                         return;
                     }
 
+                    // If today, ensure not in past
                     Calendar selectedDateTime = Calendar.getInstance();
                     selectedDateTime.set(year, month, day, selectedHour, selectedMinute);
+
+                    if (isToday(selectedDate) && selectedDateTime.before(now)) {
+                        Toast.makeText(this, "You cannot select a past time today", Toast.LENGTH_SHORT).show();
+                        showTimePickerDialog(year, month, day);
+                        return;
+                    }
+
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                     SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
                     datetimePicker.setText(dateFormatter.format(selectedDateTime.getTime()) + " " +
@@ -137,11 +159,20 @@ public class HairstyleConfirm extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    // Helper method
+    private boolean isToday(Calendar cal) {
+        Calendar today = Calendar.getInstance();
+        return cal.get(Calendar.YEAR) == today.get(Calendar.YEAR)
+                && cal.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+                && cal.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH);
+    }
+
     private void checkAndSaveAppointment() {
         String customername = customerNameInput.getText().toString();
         String branch = branchInput.getSelectedItem() != null ? branchInput.getSelectedItem().toString() : "";
         String haircut = haircutNameInput.getSelectedItem() != null ? haircutNameInput.getSelectedItem().toString() : "";
         String color = haircutColorInput.getSelectedItem() != null ? haircutColorInput.getSelectedItem().toString() : "";
+        String shave = shaveInput.getSelectedItem() != null ? shaveInput.getSelectedItem().toString() : "";
         String barber = barberInput.getSelectedItem() != null ? barberInput.getSelectedItem().toString() : "";
         String dateTime = datetimePicker.getText().toString();
 
@@ -150,27 +181,28 @@ public class HairstyleConfirm extends AppCompatActivity {
             return;
         }
 
-        new CheckActiveAppointmentTask(customername, branch, haircut, color, barber, dateTime).execute();
+        // First, check if the barber's queue limit has been reached
+        new CheckBarberQueueTask(customername, branch, haircut, color, shave, barber, dateTime).execute();
     }
 
     private void showConfirmDialog(final String customername, final String branch, final String haircut,
-                                   final String color, final String barber, final String dateTime) {
+                                   final String color, final String shave, final String barber, final String dateTime) {
         new AlertDialog.Builder(this)
                 .setTitle("Confirm Appointment?")
                 .setMessage("Are you sure you want to confirm this appointment?")
                 .setPositiveButton("Yes", (dialog, which) ->
-                        saveAppointment(customername, haircut, color, dateTime, branch, barber))
+                        saveAppointment(customername, haircut, color, shave, dateTime, branch, barber))
                 .setNegativeButton("No", null)
                 .show();
     }
 
-    private void saveAppointment(String customername, String haircut, String color, String dateTime,
-                                 String branch, String barber) {
+    private void saveAppointment(String customername, String haircut, String color, String shave,
+                                 String dateTime, String branch, String barber) {
         String[] dateTimeParts = dateTime.split(" ");
         String date = dateTimeParts[0];
         String timeslot = dateTimeParts[1];
 
-        new SaveAppointmentTask(customername, haircut, color, date, timeslot, branch, barber).execute();
+        new SaveAppointmentTask(customername, haircut, color, shave, date, timeslot, branch, barber).execute();
     }
 
     private String fetchData(String requestUrl, Map<String, String> postData) {
@@ -317,6 +349,7 @@ public class HairstyleConfirm extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class FetchBarbersTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -350,15 +383,64 @@ public class HairstyleConfirm extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class CheckActiveAppointmentTask extends AsyncTask<Void, Void, String> {
-        private final String customername, branch, haircut, color, barber, dateTime;
+    private class CheckBarberQueueTask extends AsyncTask<Void, Void, String> {
+        private final String customername, branch, haircut, color, shave, barber, dateTime;
 
-        CheckActiveAppointmentTask(String customername, String branch, String haircut,
-                                   String color, String barber, String dateTime) {
+        CheckBarberQueueTask(String customername, String branch, String haircut,
+                             String color, String shave, String barber, String dateTime) {
             this.customername = customername;
             this.branch = branch;
             this.haircut = haircut;
             this.color = color;
+            this.shave = shave;
+            this.barber = barber;
+            this.dateTime = dateTime;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            Map<String, String> postData = new HashMap<>();
+            postData.put("barber", barber);
+            return fetchData(BASE_URL + "check_barber_queue.php", postData);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(result);
+                    String status = jsonResponse.getString("status");
+                    String message = jsonResponse.getString("message");
+
+                    if ("full".equals(status)) {
+                        Toast.makeText(HairstyleConfirm.this, message, Toast.LENGTH_LONG).show();
+                    } else if ("available".equals(status)) {
+                        // Barber is available, now check for existing user appointments
+                        new CheckActiveAppointmentTask(customername, branch, haircut, color, shave, barber, dateTime).execute();
+                    } else {
+                        Toast.makeText(HairstyleConfirm.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    Log.e("CheckBarberQueueTask", "JSON parsing error: " + e.getMessage());
+                    Toast.makeText(HairstyleConfirm.this, "Error checking barber queue.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(HairstyleConfirm.this, "Server error during queue check.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class CheckActiveAppointmentTask extends AsyncTask<Void, Void, String> {
+        private final String customername, branch, haircut, color, shave, barber, dateTime;
+
+        CheckActiveAppointmentTask(String customername, String branch, String haircut,
+                                   String color, String shave, String barber, String dateTime) {
+            this.customername = customername;
+            this.branch = branch;
+            this.haircut = haircut;
+            this.color = color;
+            this.shave = shave;
             this.barber = barber;
             this.dateTime = dateTime;
         }
@@ -370,6 +452,7 @@ public class HairstyleConfirm extends AppCompatActivity {
             postData.put("branch", branch);
             postData.put("haircut", haircut);
             postData.put("color", color);
+            postData.put("shave", shave);
             postData.put("barber", barber);
             postData.put("dateTime", dateTime);
             return fetchData(BASE_URL + "check_active_appointment.php", postData);
@@ -390,7 +473,7 @@ public class HairstyleConfirm extends AppCompatActivity {
                                 .setPositiveButton("OK", null)
                                 .show();
                     } else if ("not_exists".equals(status)) {
-                        HairstyleConfirm.this.showConfirmDialog(customername, branch, haircut, color, barber, dateTime);
+                        HairstyleConfirm.this.showConfirmDialog(customername, branch, haircut, color, shave, barber, dateTime);
                     } else {
                         Toast.makeText(HairstyleConfirm.this, message, Toast.LENGTH_SHORT).show();
                     }
@@ -406,13 +489,14 @@ public class HairstyleConfirm extends AppCompatActivity {
 
     @SuppressLint("StaticFieldLeak")
     private class SaveAppointmentTask extends AsyncTask<Void, Void, String> {
-        private final String customername, haircut, color, date, timeslot, branch, barber;
+        private final String customername, haircut, color, shave, date, timeslot, branch, barber;
 
-        SaveAppointmentTask(String customername, String haircut, String color,
+        SaveAppointmentTask(String customername, String haircut, String color, String shave,
                             String date, String timeslot, String branch, String barber) {
             this.customername = customername;
             this.haircut = haircut;
             this.color = color;
+            this.shave = shave;
             this.date = date;
             this.timeslot = timeslot;
             this.branch = branch;
@@ -425,6 +509,7 @@ public class HairstyleConfirm extends AppCompatActivity {
             postData.put("customername", customername);
             postData.put("haircut", haircut);
             postData.put("color", color);
+            postData.put("shave", shave);
             postData.put("date", date);
             postData.put("timeslot", timeslot);
             postData.put("branch", branch);

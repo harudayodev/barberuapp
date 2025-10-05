@@ -46,6 +46,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             title = currentItem.getHaircutName() + " (Completed)";
         } else if (currentItem.getStatus().equalsIgnoreCase("Cancelled")) {
             title = currentItem.getHaircutName() + " (Cancelled)";
+        } else if (currentItem.getStatus().equalsIgnoreCase("Archived")) {
+            title = currentItem.getHaircutName() + " (Archived)";
         } else {
             title = "💈 " + currentItem.getHaircutName();
         }
@@ -84,8 +86,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             statusColor = 0xFFF44336; // Red
         } else if (status.equalsIgnoreCase("Pending") || status.equalsIgnoreCase("Ongoing")) {
             statusColor = 0xFFFFC107; // Amber
+        } else if (status.equalsIgnoreCase("Archived")) {
+            statusColor = 0xFFE7B416; // Yellow
         } else {
-            statusColor = defaultColor;
+            statusColor = defaultColor; // gray
         }
 
         spannable.setSpan(new ForegroundColorSpan(statusColor),

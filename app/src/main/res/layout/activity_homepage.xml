@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomepageUser">
+    tools:context=".HomepageActivity">
 
     <ImageView
         android:id="@+id/background_image"
@@ -51,7 +51,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Username here"
-        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="@+id/settingsIcon"
         app:layout_constraintStart_toEndOf="@+id/settingsIcon"
         app:layout_constraintTop_toBottomOf="@+id/infowelcome"
@@ -89,7 +91,7 @@
         android:layout_marginTop="90dp"
         android:text="Categories"
         android:textColor="@color/white"
-        android:textSize="28sp"
+        android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingsIcon"
@@ -102,6 +104,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_orange_background"
+        android:gravity="center"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
@@ -110,8 +113,7 @@
         android:textColor="@color/white"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/category"
-        tools:ignore="HardcodedText,MissingConstraints,TextContrastCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/category"/>
 
     <TextView
         android:id="@+id/servicescat"
@@ -119,6 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:background="@drawable/rounded_transparent_background"
+        android:gravity="center"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
@@ -127,8 +130,7 @@
         android:textColor="@color/white"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/allcat"
-        app:layout_constraintTop_toTopOf="@+id/allcat"
-        tools:ignore="HardcodedText,MissingConstraints,TextContrastCheck" />
+        app:layout_constraintTop_toTopOf="@+id/allcat"/>
 
     <TextView
         android:id="@+id/toolscat"
@@ -136,6 +138,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:background="@drawable/rounded_transparent_background"
+        android:gravity="center"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
@@ -144,8 +147,7 @@
         android:textColor="@color/white"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/servicescat"
-        app:layout_constraintTop_toTopOf="@+id/allcat"
-        tools:ignore="HardcodedText,MissingConstraints,TextContrastCheck" />
+        app:layout_constraintTop_toTopOf="@+id/allcat"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/services_container"

@@ -40,25 +40,19 @@ public class OTPActivity extends AppCompatActivity {
         otpInput3 = findViewById(R.id.otp_input_3);
         otpInput4 = findViewById(R.id.otp_input_4);
 
-        return_btn.setOnClickListener(v -> {
-            new AlertDialog.Builder(OTPActivity.this)
-                    .setTitle("Exit OTP")
-                    .setMessage("Are you sure you want to go back?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        Intent intent = new Intent(OTPActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton("No", (dialog, which) -> {
-                        dialog.dismiss();
-                    })
-                    .show();
-        });
+        return_btn.setOnClickListener(v -> new AlertDialog.Builder(OTPActivity.this)
+                .setTitle("Exit OTP")
+                .setMessage("Are you sure you want to go back?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    Intent intent = new Intent(OTPActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show());
 
-        resendButton.setOnClickListener(v -> {
-            startCountdown();
-        });
+        resendButton.setOnClickListener(v -> startCountdown());
 
         startCountdown();
 

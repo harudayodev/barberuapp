@@ -1,9 +1,13 @@
 package com.example.barberuapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import org.json.JSONObject;
 
@@ -13,6 +17,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
 
@@ -20,6 +25,7 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
         void onReviewSubmitted(boolean success, float stars, String reviewContent);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private final Context context;
     private final int userId;
     private final int shopId;
@@ -36,6 +42,7 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
         this.listener = listener;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected String doInBackground(Void... voids) {
         try {
@@ -44,10 +51,10 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
 
-            String postData = "userID=" + URLEncoder.encode(String.valueOf(userId), "UTF-8") +
-                    "&shopID=" + URLEncoder.encode(String.valueOf(shopId), "UTF-8") +
-                    "&stars=" + URLEncoder.encode(String.valueOf(stars), "UTF-8") +
-                    "&reviewcontent=" + URLEncoder.encode(reviewContent, "UTF-8");
+            String postData = "userID=" + URLEncoder.encode(String.valueOf(userId), StandardCharsets.UTF_8) +
+                    "&shopID=" + URLEncoder.encode(String.valueOf(shopId), StandardCharsets.UTF_8) +
+                    "&stars=" + URLEncoder.encode(String.valueOf(stars), StandardCharsets.UTF_8) +
+                    "&reviewcontent=" + URLEncoder.encode(reviewContent, StandardCharsets.UTF_8);
 
             OutputStream os = conn.getOutputStream();
             os.write(postData.getBytes());

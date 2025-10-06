@@ -45,8 +45,8 @@
 
     <string name="about_app">BARBERU is your dedicated barbershop locator app, designed to help you find the best barbershops in town. With an interactive map and a detailed list, we make it easy to discover new spots and get the perfect cut.</string>
     <string name="dev1_name">Paul James Castillo</string>
-    <string name="developer_1_bio">Frontend Lead, UI/UX Designer. Passionate about crafting intuitive and visually appealing user interfaces.</string>
+    <string name="developer_1_bio">Full Stack Lead. Made the app from the ground up with extensive code knowledge.</string>
     <string name="dev2_name">Francis Julian De Regla</string>
-    <string name="developer_2_bio">Backend Engineer, Data Management. Focused on building robust and efficient systems to power BARBERU.</string>
+    <string name="developer_2_bio">Front End Lead. Designed the app and all its interfaces for the user to explore.</string>
 
 </resources>

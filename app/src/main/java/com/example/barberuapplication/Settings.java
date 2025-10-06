@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONObject;
@@ -38,7 +40,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
 import android.util.Base64;
 
 public class Settings extends AppCompatActivity {
@@ -114,6 +115,7 @@ public class Settings extends AppCompatActivity {
     }
 
     /** -------------------- PROFILE IMAGE METHODS -------------------- */
+    @SuppressLint("IntentReset")
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
@@ -183,6 +185,7 @@ public class Settings extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private void uploadProfileImage(Bitmap bitmap) {
         new AsyncTask<Bitmap, Void, String>() {
+            @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
             @Override
             protected String doInBackground(Bitmap... bitmaps) {
                 try {
@@ -196,8 +199,8 @@ public class Settings extends AppCompatActivity {
                     conn.setRequestMethod("POST");
                     conn.setDoOutput(true);
 
-                    String data = URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(userId), "UTF-8") + "&" +
-                            URLEncoder.encode("profile", "UTF-8") + "=" + URLEncoder.encode(encodedImage, "UTF-8");
+                    String data = URLEncoder.encode("id", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(String.valueOf(userId), StandardCharsets.UTF_8) + "&" +
+                            URLEncoder.encode("profile", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(encodedImage, StandardCharsets.UTF_8);
 
                     OutputStream os = conn.getOutputStream();
                     os.write(data.getBytes());

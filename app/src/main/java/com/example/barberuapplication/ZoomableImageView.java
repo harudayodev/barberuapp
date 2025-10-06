@@ -1,6 +1,7 @@
 package com.example.barberuapplication;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -11,21 +12,22 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.animation.DecelerateInterpolator;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 
 public class ZoomableImageView extends AppCompatImageView {
 
-    private Matrix matrix = new Matrix();
-    private Matrix baseMatrix = new Matrix();
+    private final Matrix matrix = new Matrix();
+    private final Matrix baseMatrix = new Matrix();
     private float scale = 1f;
     private float minZoom = 1f;
-    private float maxZoom = 3f;
+    private final float maxZoom = 3f;
 
     private ScaleGestureDetector scaleDetector;
     private GestureDetector gestureDetector;
 
     // For dragging
-    private PointF lastTouch = new PointF();
+    private final PointF lastTouch = new PointF();
     private int mode = NONE;
 
     // Modes
@@ -122,7 +124,7 @@ public class ZoomableImageView extends AppCompatImageView {
         // Gesture detector for double-tap
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onDoubleTap(MotionEvent e) {
+            public boolean onDoubleTap(@NonNull MotionEvent e) {
                 float targetScale;
 
                 if (scale < (minZoom * 1.6f)) {
@@ -178,6 +180,7 @@ public class ZoomableImageView extends AppCompatImageView {
         isInitialized = true;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         getParent().requestDisallowInterceptTouchEvent(true);

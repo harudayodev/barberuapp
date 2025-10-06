@@ -39,6 +39,7 @@ import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Camera extends AppCompatActivity {
 
@@ -123,7 +124,7 @@ public class Camera extends AppCompatActivity {
                 selectedFilterId = 0;
                 filterOverlay.setVisibility(View.GONE);
                 resetButton.setVisibility(View.GONE); // Hide the reset button
-                ((FilterAdapter) filtersRecycler.getAdapter()).setSelectedPosition(RecyclerView.NO_POSITION);
+                ((FilterAdapter) Objects.requireNonNull(filtersRecycler.getAdapter())).setSelectedPosition(RecyclerView.NO_POSITION);
             } else {
                 // Select new filter
                 selectedFilterId = resId;
@@ -134,7 +135,7 @@ public class Camera extends AppCompatActivity {
                 // Reset position and scale to original
                 resetFilterPosition();
 
-                ((FilterAdapter) filtersRecycler.getAdapter()).setSelectedPosition(position);
+                ((FilterAdapter) Objects.requireNonNull(filtersRecycler.getAdapter())).setSelectedPosition(position);
             }
         });
         filtersRecycler.setAdapter(adapter);
@@ -346,7 +347,7 @@ public class Camera extends AppCompatActivity {
                 true
         );
 
-        Bitmap result = Bitmap.createBitmap(photoWidth, photoHeight, photo.getConfig());
+        Bitmap result = Bitmap.createBitmap(photoWidth, photoHeight, Objects.requireNonNull(photo.getConfig()));
         Canvas canvas = new Canvas(result);
 
         canvas.drawBitmap(photo, 0, 0, null);

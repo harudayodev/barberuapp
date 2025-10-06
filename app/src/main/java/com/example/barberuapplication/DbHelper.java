@@ -1,7 +1,10 @@
 package com.example.barberuapplication;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import org.json.JSONObject;
 
@@ -13,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class DbHelper {
 
@@ -43,6 +47,7 @@ public class DbHelper {
             this.callback = callback;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
         protected String doInBackground(Void... voids) {
             HttpURLConnection conn = null;
@@ -53,12 +58,12 @@ public class DbHelper {
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
 
-                String data = URLEncoder.encode("firstname", "UTF-8") + "=" + URLEncoder.encode(fname, "UTF-8") + "&" +
-                        URLEncoder.encode("lastname", "UTF-8") + "=" + URLEncoder.encode(lname, "UTF-8") + "&" +
-                        URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8") + "&" +
-                        URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
+                String data = URLEncoder.encode("firstname", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(fname, StandardCharsets.UTF_8) + "&" +
+                        URLEncoder.encode("lastname", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(lname, StandardCharsets.UTF_8) + "&" +
+                        URLEncoder.encode("email", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(email, StandardCharsets.UTF_8) + "&" +
+                        URLEncoder.encode("password", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(password, StandardCharsets.UTF_8);
 
                 writer.write(data);
                 writer.flush();
@@ -108,6 +113,7 @@ public class DbHelper {
             this.callback = callback;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
         protected String doInBackground(Void... voids) {
             HttpURLConnection conn = null;
@@ -118,10 +124,10 @@ public class DbHelper {
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
 
-                String data = URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8") + "&" +
-                        URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
+                String data = URLEncoder.encode("email", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(email, StandardCharsets.UTF_8) + "&" +
+                        URLEncoder.encode("password", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(password, StandardCharsets.UTF_8);
 
                 writer.write(data);
                 writer.flush();

@@ -3,15 +3,10 @@ package com.example.barberuapplication;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class About extends AppCompatActivity {
 
@@ -28,28 +23,26 @@ public class About extends AppCompatActivity {
 
         returnbutton.setOnClickListener(v -> {
             String role = getIntent().getStringExtra("role");
+            Intent intent;
             if ("admin".equals(role)) {
-                Intent intent = new Intent(About.this, HomepageAdmin.class);
-                startActivity(intent);
-                finish();
+                intent = new Intent(About.this, HomepageAdmin.class);
             } else {
-                Intent intent = new Intent(About.this, HomepageActivity.class);
-                startActivity(intent);
-                finish();
+                intent = new Intent(About.this, HomepageActivity.class);
             }
+            startActivity(intent);
+            finish();
         });
 
         homebutton.setOnClickListener(v -> {
             String role = getIntent().getStringExtra("role");
+            Intent intent;
             if ("admin".equals(role)) {
-                Intent intent = new Intent(About.this, HomepageAdmin.class);
-                startActivity(intent);
-                finish();
+                intent = new Intent(About.this, HomepageAdmin.class);
             } else {
-                Intent intent = new Intent(About.this, HomepageActivity.class);
-                startActivity(intent);
-                finish();
+                intent = new Intent(About.this, HomepageActivity.class);
             }
+            startActivity(intent);
+            finish();
         });
 
     }

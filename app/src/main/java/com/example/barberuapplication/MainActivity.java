@@ -3,7 +3,6 @@ package com.example.barberuapplication;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences; // Import SharedPreferences
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.OnBackPressedCallback;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,12 +33,8 @@ public class MainActivity extends AppCompatActivity {
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Exit")
                         .setMessage("Are you sure you want to exit?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            finishAffinity();
-                        })
-                        .setNegativeButton("No", (dialog, which) -> {
-                            dialog.dismiss();
-                        })
+                        .setPositiveButton("Yes", (dialog, which) -> finishAffinity())
+                        .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                         .show();
             }
         });

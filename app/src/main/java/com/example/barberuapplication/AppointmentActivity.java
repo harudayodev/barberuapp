@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -35,6 +36,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class AppointmentActivity extends AppCompatActivity {
 
@@ -158,6 +160,7 @@ public class AppointmentActivity extends AppCompatActivity {
             this.customername = customername;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
         protected String doInBackground(Void... voids) {
             String result = "";
@@ -169,8 +172,8 @@ public class AppointmentActivity extends AppCompatActivity {
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                String data = URLEncoder.encode("customername", "UTF-8") + "=" + URLEncoder.encode(customername, "UTF-8");
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                String data = URLEncoder.encode("customername", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(customername, StandardCharsets.UTF_8);
                 writer.write(data);
                 writer.flush();
                 writer.close();
@@ -304,6 +307,7 @@ public class AppointmentActivity extends AppCompatActivity {
             this.customername = customername;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
         protected String doInBackground(Void... voids) {
             String result = "";
@@ -315,8 +319,8 @@ public class AppointmentActivity extends AppCompatActivity {
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                String data = URLEncoder.encode("customername", "UTF-8") + "=" + URLEncoder.encode(customername, "UTF-8");
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                String data = URLEncoder.encode("customername", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(customername, StandardCharsets.UTF_8);
                 writer.write(data);
                 writer.flush();
                 writer.close();

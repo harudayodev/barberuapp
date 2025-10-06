@@ -76,26 +76,22 @@ public class HomepageAdmin extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         })
-                        .setNegativeButton("No", (dialog, which) -> {
-                            dialog.dismiss();
-                        })
+                        .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                         .show();
             }
         });
 
-        logoutIcon.setOnClickListener(v -> {
-            new AlertDialog.Builder(HomepageAdmin.this)
-                    .setTitle("Logout")
-                    .setMessage("Are you sure you want to log out?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        Intent intent = new Intent(HomepageAdmin.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-                    .show();
-        });
+        logoutIcon.setOnClickListener(v -> new AlertDialog.Builder(HomepageAdmin.this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    Intent intent = new Intent(HomepageAdmin.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show());
 
         // ✅ Category tabs
         allcat.setOnClickListener(v -> showAll());

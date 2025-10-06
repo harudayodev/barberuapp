@@ -1,12 +1,12 @@
 package com.example.barberuapplication;
 
 public class QueueItem {
-    private int queueID;
-    private String name;
-    private String barber;
-    private String dateTime;
-    private String haircutName;
-    private String haircutColor;
+    private final int queueID;
+    private final String name;
+    private final String barber;
+    private final String dateTime;
+    private final String haircutName;
+    private final String haircutColor;
 
     // Constructor
     public QueueItem(int queueID, String name, String barber, String dateTime, String haircutName, String haircutColor) {

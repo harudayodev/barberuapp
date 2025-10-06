@@ -34,7 +34,7 @@ public class HomepageActivity extends AppCompatActivity {
     private TextView[] categoryTabs;
     private ImageView userProfileImage;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "CutPasteId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

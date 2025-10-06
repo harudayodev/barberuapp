@@ -57,11 +57,11 @@
             android:id="@+id/change_profile_btn"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/edit"
             android:padding="4dp"
-            app:layout_constraintEnd_toEndOf="@id/userprofile"
+            android:src="@drawable/edit"
             app:layout_constraintBottom_toBottomOf="@id/userprofile"
-            tools:ignore="ContentDescription" />
+            app:layout_constraintEnd_toEndOf="@id/userprofile"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
 
         <TextView
             android:id="@+id/user_name"

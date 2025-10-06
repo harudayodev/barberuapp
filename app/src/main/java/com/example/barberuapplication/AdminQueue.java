@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.OnActionButtonClickListener {
 
@@ -92,6 +93,7 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
     // MISSING fetchData METHOD (REQUIRED) - Reinserted from previous context
     // =========================================================================
 
+    @SuppressLint("NewApi")
     private String fetchData(String requestUrl, Map<String, String> postData) {
         HttpURLConnection connection = null;
         BufferedReader reader = null;
@@ -106,21 +108,24 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
             if (postData != null && !postData.isEmpty()) {
                 connection.setDoOutput(true);
                 OutputStream os = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+
                 StringBuilder result = new StringBuilder();
                 boolean first = true;
                 for (Map.Entry<String, String> entry : postData.entrySet()) {
                     if (first) first = false;
                     else result.append("&");
-                    result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                    result.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
                     result.append("=");
-                    result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                    result.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
                 }
+
                 writer.write(result.toString());
                 writer.flush();
                 writer.close();
                 os.close();
             }
+
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {

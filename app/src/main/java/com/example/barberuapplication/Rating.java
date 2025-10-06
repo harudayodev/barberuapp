@@ -3,12 +3,14 @@ package com.example.barberuapplication;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 public class Rating extends AppCompatActivity {
 
@@ -64,6 +67,7 @@ public class Rating extends AppCompatActivity {
             this.customername = customername;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
         protected String doInBackground(Void... voids) {
             try {
@@ -73,9 +77,9 @@ public class Rating extends AppCompatActivity {
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                String data = URLEncoder.encode("customername", "UTF-8") + "=" +
-                        URLEncoder.encode(customername, "UTF-8");
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                String data = URLEncoder.encode("customername", StandardCharsets.UTF_8) + "=" +
+                        URLEncoder.encode(customername, StandardCharsets.UTF_8);
                 writer.write(data);
                 writer.flush();
                 writer.close();

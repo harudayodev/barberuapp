@@ -31,8 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/button_container"
         app:implementationMode="performance"
-        app:scaleType="fillCenter"
-        />
+        app:scaleType="fillCenter" />
 
     <ImageView
         android:id="@+id/captured_image_view"
@@ -40,57 +39,51 @@
         android:layout_height="0dp"
         android:visibility="gone"
         android:background="#000000"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/return_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/button_container"
+        app:layout_constraintBottom_toTopOf="@id/filter_list"
         tools:ignore="ContentDescription" />
 
-    <com.example.barberuapplication.MovableResizableFilter
-        android:id="@+id/filter_overlay"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
+    <ProgressBar
+        android:id="@+id/loading_spinner"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="10dp"
         android:visibility="gone"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/hair1"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/button_container"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <TextView
+        android:id="@+id/selected_haircut_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No haircut selected"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@id/filter_list"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="HardcodedText" />
+
+
+    <!-- Horizontal Filter List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/filters_recycler"
-        android:layout_width="0dp"
+        android:id="@+id/filter_list"
+        android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginBottom="16dp"
-        android:clipToPadding="false"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:scrollbars="none"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:scrollbars="horizontal"
         app:layout_constraintBottom_toTopOf="@id/button_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="SpeakableTextPresentCheck"
         tools:listitem="@layout/item_filter" />
-
-    <ImageButton
-        android:id="@+id/reset_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="fitCenter"
-        android:background="@drawable/rounded_button"
-        android:src="@drawable/ic_reset"
-        android:padding="12dp"
-        android:contentDescription="Reset filter position and size"
-        app:layout_constraintBottom_toTopOf="@id/filters_recycler"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:visibility="gone"
-        tools:ignore="HardcodedText" />
 
     <LinearLayout
         android:id="@+id/button_container"
@@ -115,7 +108,7 @@
             android:text="Capture"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            tools:ignore="ButtonStyle,HardcodedText" />
+            tools:ignore="HardcodedText" />
 
         <ImageButton
             android:id="@+id/rotate_button"
@@ -127,7 +120,6 @@
             android:padding="12dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="2dp"
             android:contentDescription="Rotate camera"
             tools:ignore="HardcodedText" />
 
@@ -145,7 +137,7 @@
             android:textSize="18sp"
             android:visibility="gone"
             android:layout_marginStart="16dp"
-            tools:ignore="ButtonStyle,HardcodedText" />
+            tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/next_button"
@@ -161,6 +153,7 @@
             android:textSize="18sp"
             android:visibility="gone"
             android:layout_marginStart="16dp"
-            tools:ignore="ButtonStyle,HardcodedText" />
+            tools:ignore="HardcodedText" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

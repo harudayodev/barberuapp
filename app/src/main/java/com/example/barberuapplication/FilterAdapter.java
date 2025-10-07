@@ -1,6 +1,5 @@
 package com.example.barberuapplication;
 
-import android.animation.ObjectAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +10,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.List;
+
 public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterViewHolder> {
 
-    private final int[] filterRes;
+    private final List<Haircut> haircutList;
     private final OnFilterClickListener listener;
-    private int selectedPosition = RecyclerView.NO_POSITION; // Track selected filter
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
     public interface OnFilterClickListener {
-        void onFilterClick(int resId, int position); // Pass position to the activity
+        void onFilterClick(Haircut haircut, int position);
     }
 
-    public FilterAdapter(int[] filterRes, OnFilterClickListener listener) {
-        this.filterRes = filterRes;
+    public FilterAdapter(List<Haircut> haircutList, OnFilterClickListener listener) {
+        this.haircutList = haircutList;
         this.listener = listener;
     }
 
@@ -36,53 +37,31 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
 
     @Override
     public void onBindViewHolder(@NonNull FilterViewHolder holder, int position) {
-        int resId = filterRes[position];
+        Haircut haircut = haircutList.get(position);
 
         Glide.with(holder.imageView.getContext())
-                .load(filterRes[position])
+                .load(R.drawable.haircutalt)
                 .centerInside()
                 .into(holder.imageView);
 
-        // Apply border if selected
-        if (position == selectedPosition) {
-            holder.itemView.setBackgroundResource(R.drawable.filter_selected_border);
+        // Highlight selected filter
+        holder.itemView.setBackgroundResource(
+                position == selectedPosition ? R.drawable.filter_selected_border : 0
+        );
 
-            // 🔸 Animate highlight fade-in
-            ObjectAnimator fadeIn = ObjectAnimator.ofFloat(holder.itemView, "alpha", 0f, 1f);
-            fadeIn.setDuration(250);
-            fadeIn.start();
-        } else {
-            holder.itemView.setBackgroundResource(0);
-
-            // 🔸 Animate fade-out for deselection
-            ObjectAnimator fadeOut = ObjectAnimator.ofFloat(holder.itemView, "alpha", 1f, 0.7f);
-            fadeOut.setDuration(150);
-            fadeOut.start();
-        }
-
-        holder.itemView.setOnClickListener(v -> {
-            // No need to track position here, let the activity handle it
-            listener.onFilterClick(resId, holder.getAdapterPosition());
-        });
+        holder.itemView.setOnClickListener(v -> listener.onFilterClick(haircut, holder.getAdapterPosition()));
     }
 
     @Override
     public int getItemCount() {
-        return filterRes.length;
+        return haircutList.size();
     }
 
-    // New method to set the selected position and refresh the view
     public void setSelectedPosition(int position) {
-        int previousPosition = this.selectedPosition;
-        this.selectedPosition = position;
-
-        // Notify both the previous and new selected items to update their state
-        if (previousPosition != RecyclerView.NO_POSITION) {
-            notifyItemChanged(previousPosition);
-        }
-        if (this.selectedPosition != RecyclerView.NO_POSITION) {
-            notifyItemChanged(this.selectedPosition);
-        }
+        int previousPosition = selectedPosition;
+        selectedPosition = position;
+        if (previousPosition != RecyclerView.NO_POSITION) notifyItemChanged(previousPosition);
+        if (selectedPosition != RecyclerView.NO_POSITION) notifyItemChanged(selectedPosition);
     }
 
     static class FilterViewHolder extends RecyclerView.ViewHolder {

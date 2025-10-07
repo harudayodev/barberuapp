@@ -7,16 +7,21 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,50 +37,46 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.common.util.concurrent.ListenableFuture;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class Camera extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
-    private Bitmap capturedBitmap = null;
 
     private PreviewView previewView;
-    private MovableResizableFilter filterOverlay;
     private ImageView capturedImageView;
+    private RecyclerView filterList;
     private Button captureButton, retakeButton, nextButton;
     private ImageButton rotateButton, returnButton;
-    private RecyclerView filtersRecycler;
-
-    // --- New Button Declaration ---
-    private ImageButton resetButton;
-    // ------------------------------
+    private ProgressBar loadingSpinner;
+    private TextView selectedHaircutLabel;
 
     private ImageCapture imageCapture;
     private CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
 
-    private int selectedFilterId = 0;
+    private Bitmap capturedBitmap = null;
     private String customerName;
+    private FilterAdapter filterAdapter;
+    private int selectedFilterPosition = RecyclerView.NO_POSITION;
 
-    private final int[] filterRes = {
-            R.drawable.hair1, // short hair
-            R.drawable.hair4, // wavy hair left
-            R.drawable.hair5, // wavy hair right
-            R.drawable.hair3, // curly
-            R.drawable.hair2, // messy/other style
-            R.drawable.hair6,
-            R.drawable.hair7,
-            R.drawable.hair8,
-            R.drawable.hair9,
-            R.drawable.hair10
-    };
-
+    // Reusable Toast
+    private Toast activeToast;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -85,20 +86,19 @@ public class Camera extends AppCompatActivity {
 
         previewView = findViewById(R.id.previewView);
         capturedImageView = findViewById(R.id.captured_image_view);
+        filterList = findViewById(R.id.filter_list);
         captureButton = findViewById(R.id.capture_button);
         retakeButton = findViewById(R.id.retake_button);
         nextButton = findViewById(R.id.next_button);
         rotateButton = findViewById(R.id.rotate_button);
         returnButton = findViewById(R.id.return_button);
-        filterOverlay = findViewById(R.id.filter_overlay);
-        filtersRecycler = findViewById(R.id.filters_recycler);
-
-        // --- Initialize New Button ---
-        resetButton = findViewById(R.id.reset_button);
-        // -----------------------------
+        loadingSpinner = findViewById(R.id.loading_spinner);
+        selectedHaircutLabel = findViewById(R.id.selected_haircut_label);
 
         customerName = getIntent().getStringExtra("fullname");
         if (customerName == null) customerName = "Guest";
+
+        setupFilterList();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -109,56 +109,95 @@ public class Camera extends AppCompatActivity {
             startCamera();
         }
 
-        setupFilterRecycler();
         setupButtonClickListeners();
     }
 
-    private void setupFilterRecycler() {
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        filtersRecycler.setLayoutManager(layoutManager);
+    // 🔹 Custom Styled Toast (semi-transparent bubble above filter bar)
+    private void showStyledToast(String message) {
+        if (activeToast != null) activeToast.cancel();
 
-        FilterAdapter adapter = new FilterAdapter(filterRes, (resId, position) -> {
-            if (selectedFilterId == resId) {
-                // Deselect filter
-                selectedFilterId = 0;
-                filterOverlay.setVisibility(View.GONE);
-                resetButton.setVisibility(View.GONE); // Hide the reset button
-                ((FilterAdapter) Objects.requireNonNull(filtersRecycler.getAdapter())).setSelectedPosition(RecyclerView.NO_POSITION);
+        TextView toastText = new TextView(this);
+        toastText.setText(message);
+        toastText.setTextColor(Color.WHITE);
+        toastText.setTextSize(15);
+        toastText.setPadding(35, 20, 35, 20);
+        toastText.setGravity(Gravity.CENTER);
+
+        // Background: rounded corners + semi-transparent dark gray
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.parseColor("#AA000000")); // 67% opaque black
+        bg.setCornerRadius(50);
+        toastText.setBackground(bg);
+
+        // Wrap in layout (to center horizontally)
+        LinearLayout layout = new LinearLayout(this);
+        layout.setGravity(Gravity.CENTER);
+        layout.addView(toastText);
+
+        activeToast = new Toast(this);
+        activeToast.setView(layout);
+        activeToast.setDuration(Toast.LENGTH_SHORT);
+        activeToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 250);
+        activeToast.show();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setupFilterList() {
+        filterList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        List<Haircut> haircutList = new ArrayList<>();
+        filterAdapter = new FilterAdapter(haircutList, (haircut, position) -> {
+            if (selectedFilterPosition == position) {
+                showStyledToast(haircut.getName() + " deselected");
+                selectedFilterPosition = RecyclerView.NO_POSITION;
+                filterAdapter.setSelectedPosition(RecyclerView.NO_POSITION);
+                selectedHaircutLabel.setText("No haircut selected");
             } else {
-                // Select new filter
-                selectedFilterId = resId;
-                filterOverlay.setImageResource(resId);
-                filterOverlay.setVisibility(View.VISIBLE);
-                resetButton.setVisibility(View.VISIBLE); // Show the reset button
-
-                // Reset position and scale to original
-                resetFilterPosition();
-
-                ((FilterAdapter) Objects.requireNonNull(filtersRecycler.getAdapter())).setSelectedPosition(position);
+                showStyledToast(haircut.getName() + " selected");
+                selectedFilterPosition = position;
+                filterAdapter.setSelectedPosition(position);
+                selectedHaircutLabel.setText("Selected: " + haircut.getName());
             }
         });
-        filtersRecycler.setAdapter(adapter);
+        filterList.setAdapter(filterAdapter);
+
+        fetchHaircutsFromServer(haircutList);
     }
 
-    // --- New method to reset filter position and size ---
-    private void resetFilterPosition() {
-        filterOverlay.post(() -> {
-            int previewWidth = previewView.getWidth();
-            int previewHeight = previewView.getHeight();
-            int filterWidth = filterOverlay.getWidth();
-            int filterHeight = filterOverlay.getHeight();
+    private void fetchHaircutsFromServer(List<Haircut> haircutList) {
+        String url = Config.BASE_URL + "get_haircuts_filters.php";
+        loadingSpinner.setVisibility(View.VISIBLE);
+        filterList.setVisibility(View.INVISIBLE);
+        selectedHaircutLabel.setVisibility(View.INVISIBLE);
 
-            // Reset scale to default
-            filterOverlay.setScaleX(1.0f);
-            filterOverlay.setScaleY(1.0f);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        @SuppressLint("NotifyDataSetChanged") JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        JSONArray haircutsArray = response.getJSONArray("haircuts");
+                        for (int i = 0; i < haircutsArray.length(); i++) {
+                            JSONObject obj = haircutsArray.getJSONObject(i);
+                            haircutList.add(new Haircut(
+                                    obj.getString("id"),
+                                    obj.getString("name")
+                            ));
+                        }
+                        filterAdapter.notifyDataSetChanged();
+                        loadingSpinner.setVisibility(View.GONE);
+                        filterList.setVisibility(View.VISIBLE);
+                        selectedHaircutLabel.setVisibility(View.VISIBLE);
+                    } catch (JSONException e) {
+                        showStyledToast("Error parsing haircut data.");
+                        loadingSpinner.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    showStyledToast("Failed to load haircuts. Please try again.");
+                    loadingSpinner.setVisibility(View.GONE);
+                });
 
-            // Recalculate and set the center position
-            filterOverlay.setX((previewWidth - filterWidth) / 2f);
-            filterOverlay.setY((previewHeight - filterHeight) / 2f);
-        });
+        queue.add(request);
     }
-    // ----------------------------------------------------
 
     private void setupButtonClickListeners() {
         captureButton.setOnClickListener(v -> takePhoto());
@@ -166,23 +205,20 @@ public class Camera extends AppCompatActivity {
         retakeButton.setOnClickListener(v -> {
             capturedImageView.setVisibility(View.GONE);
             previewView.setVisibility(View.VISIBLE);
-            if (selectedFilterId != 0) {
-                filterOverlay.setVisibility(View.VISIBLE);
-                resetButton.setVisibility(View.VISIBLE); // Show reset button on retake
-            }
             retakeButton.setVisibility(View.GONE);
             nextButton.setVisibility(View.GONE);
             captureButton.setVisibility(View.VISIBLE);
             rotateButton.setVisibility(View.VISIBLE);
             returnButton.setVisibility(View.VISIBLE);
-            filtersRecycler.setVisibility(View.VISIBLE);
+            filterList.setVisibility(View.VISIBLE);
+            selectedHaircutLabel.setVisibility(View.VISIBLE);
         });
 
         nextButton.setOnClickListener(v -> {
             if (capturedBitmap != null) {
                 saveImageToGallery(capturedBitmap);
             }
-            Intent intent = new Intent(Camera.this, HairstyleConfirm.class);
+            Intent intent = new Intent(Camera.this, BarberShopStorePicker.class);
             intent.putExtra("customername", customerName);
             startActivity(intent);
         });
@@ -199,13 +235,6 @@ public class Camera extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
-        // --- New Button Listener ---
-        resetButton.setOnClickListener(v -> {
-            resetFilterPosition();
-            Toast.makeText(Camera.this, "Filter reset", Toast.LENGTH_SHORT).show();
-        });
-        // ---------------------------
     }
 
     private void startCamera() {
@@ -223,12 +252,6 @@ public class Camera extends AppCompatActivity {
                 imageCapture = new ImageCapture.Builder().build();
 
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
-                if (selectedFilterId != 0) {
-                    filterOverlay.setVisibility(View.VISIBLE);
-                    resetButton.setVisibility(View.VISIBLE);
-                } else {
-                    resetButton.setVisibility(View.GONE);
-                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -247,34 +270,27 @@ public class Camera extends AppCompatActivity {
                         imageProxy.close();
 
                         Matrix matrix = new Matrix();
-                        // Apply rotation from camera sensor
                         matrix.postRotate(imageProxy.getImageInfo().getRotationDegrees());
 
-                        // Flip the image horizontally if the front camera was used to match the preview.
                         if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
                             matrix.postScale(-1f, 1f, bitmap.getWidth() / 2f, bitmap.getHeight() / 2f);
                         }
 
-                        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                                bitmap.getHeight(), matrix, true);
+                        Bitmap rotatedBitmap = Bitmap.createBitmap(
+                                bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
-                        // **FIX 1: CROP THE BITMAP TO MATCH THE PREVIEW'S ASPECT RATIO**
-                        Bitmap croppedBitmap = cropToMatchPreview(rotatedBitmap);
-
-                        // **FIX 2: MERGE WITH OVERLAY**
-                        capturedBitmap = mergeWithOverlay(croppedBitmap);
+                        capturedBitmap = rotatedBitmap;
 
                         runOnUiThread(() -> {
                             previewView.setVisibility(View.GONE);
-                            filterOverlay.setVisibility(View.GONE);
-                            resetButton.setVisibility(View.GONE); // Hide the reset button after capture
                             capturedImageView.setVisibility(View.VISIBLE);
                             capturedImageView.setImageBitmap(capturedBitmap);
 
                             captureButton.setVisibility(View.GONE);
                             rotateButton.setVisibility(View.GONE);
                             returnButton.setVisibility(View.GONE);
-                            filtersRecycler.setVisibility(View.GONE);
+                            filterList.setVisibility(View.GONE);
+                            selectedHaircutLabel.setVisibility(View.GONE);
                             retakeButton.setVisibility(View.VISIBLE);
                             nextButton.setVisibility(View.VISIBLE);
                         });
@@ -282,78 +298,9 @@ public class Camera extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
-                        Toast.makeText(Camera.this,
-                                "Capture failed: " + exception.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        showStyledToast("Capture failed: " + exception.getMessage());
                     }
                 });
-    }
-
-    private Bitmap cropToMatchPreview(Bitmap photo) {
-        int photoWidth = photo.getWidth();
-        int photoHeight = photo.getHeight();
-        float photoRatio = (float) photoWidth / photoHeight;
-
-        int previewWidth = previewView.getWidth();
-        int previewHeight = previewView.getHeight();
-        float previewRatio = (float) previewWidth / previewHeight;
-
-        int newWidth = photoWidth;
-        int newHeight = photoHeight;
-        int startX = 0;
-        int startY = 0;
-
-        if (photoRatio > previewRatio) {
-            newWidth = (int) (photoHeight * previewRatio);
-            startX = (photoWidth - newWidth) / 2;
-        } else if (previewRatio > photoRatio) {
-            newHeight = (int) (photoWidth / previewRatio);
-            startY = (photoHeight - newHeight) / 2;
-        }
-
-        return Bitmap.createBitmap(photo, startX, startY, newWidth, newHeight);
-    }
-
-    private Bitmap mergeWithOverlay(Bitmap photo) {
-        if (selectedFilterId == 0) {
-            return photo;
-        }
-
-        Bitmap filterBitmap = BitmapFactory.decodeResource(getResources(), selectedFilterId);
-
-        int photoWidth = photo.getWidth();
-        int photoHeight = photo.getHeight();
-
-        float overlayX = filterOverlay.getX();
-        float overlayY = filterOverlay.getY();
-        float overlayW = filterOverlay.getWidth() * filterOverlay.getScaleX();
-        float overlayH = filterOverlay.getHeight() * filterOverlay.getScaleY();
-
-        int previewWidth = previewView.getWidth();
-        int previewHeight = previewView.getHeight();
-
-        float scaleX = (float) photoWidth / previewWidth;
-        float scaleY = (float) photoHeight / previewHeight;
-
-        float newFilterX = overlayX * scaleX;
-        float newFilterY = overlayY * scaleY;
-        float newFilterW = overlayW * scaleX;
-        float newFilterH = overlayH * scaleY;
-
-        Bitmap scaledFilter = Bitmap.createScaledBitmap(
-                filterBitmap,
-                Math.round(newFilterW),
-                Math.round(newFilterH),
-                true
-        );
-
-        Bitmap result = Bitmap.createBitmap(photoWidth, photoHeight, Objects.requireNonNull(photo.getConfig()));
-        Canvas canvas = new Canvas(result);
-
-        canvas.drawBitmap(photo, 0, 0, null);
-        canvas.drawBitmap(scaledFilter, newFilterX, newFilterY, null);
-
-        return result;
     }
 
     private void saveImageToGallery(Bitmap bitmap) {
@@ -368,10 +315,10 @@ public class Camera extends AppCompatActivity {
             try (OutputStream out = getContentResolver().openOutputStream(uri)) {
                 if (out != null) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                    Toast.makeText(this, "Image saved!", Toast.LENGTH_SHORT).show();
+                    showStyledToast("Image saved!");
                 }
             } catch (Exception e) {
-                Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                showStyledToast("Save failed: " + e.getMessage());
             }
         }
     }
@@ -392,7 +339,7 @@ public class Camera extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startCamera();
             } else {
-                Toast.makeText(this, "Camera permission denied.", Toast.LENGTH_LONG).show();
+                showStyledToast("Camera permission denied.");
             }
         }
     }

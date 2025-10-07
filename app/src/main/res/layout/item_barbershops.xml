@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#E0E0E0"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Store Image -->
+        <ImageView
+            android:id="@+id/imgBarbershop"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/rounded_image_bg"
+            android:scaleType="centerCrop"
+            android:src="@drawable/home"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <!-- Barbershop Name -->
+        <TextView
+            android:id="@+id/tvBarbershopName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/imgBarbershop"
+            app:layout_constraintTop_toTopOf="@id/imgBarbershop"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Classic Cuts Barbershop" />
+
+        <!-- Status -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/status_chip_closed"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="Closed"
+            android:textColor="@color/green_500"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tvBarbershopName"
+            app:layout_constraintTop_toBottomOf="@id/tvBarbershopName"
+            tools:ignore="HardcodedText,TextContrastCheck"
+            tools:text="Open" />
+
+        <!-- Distance + Address -->
+        <TextView
+            android:id="@+id/tvDetails"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="3.2 km • 123 Main St, City"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvStatus"
+            app:layout_constraintTop_toBottomOf="@id/tvStatus"
+            tools:ignore="HardcodedText,TextContrastCheck"
+            tools:text="2.4 km • 14 Market Ave, Quezon City" />
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="end"
+            app:layout_constraintTop_toBottomOf="@id/tvDetails"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvDetails">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDirections"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Directions"
+                android:textSize="13sp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                tools:ignore="HardcodedText" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMenu"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="Choose"
+                android:textSize="13sp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

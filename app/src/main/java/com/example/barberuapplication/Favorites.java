@@ -15,21 +15,7 @@ public class Favorites extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_favorites);
+        setContentView(R.layout.activity_storepicker);
 
-        returnButton = findViewById(R.id.returnbutton);
-        ImageView homebutton = findViewById(R.id.homeview);
-
-        returnButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Favorites.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
-
-        homebutton.setOnClickListener(v -> {
-            Intent intent = new Intent(Favorites.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
     }
 }

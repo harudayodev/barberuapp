@@ -17,6 +17,7 @@ firebaseAuth = "24.0.1"
 cameraView = "1.5.0"
 camera = "1.5.0"
 cameraLifecycle = "1.5.0"
+volley = "1.2.1"
 
 [libraries]
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
@@ -37,6 +38,7 @@ camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
 camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camera" }
 camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

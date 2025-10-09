@@ -31,9 +31,13 @@ import java.nio.charset.StandardCharsets;
 public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.OnActionButtonClickListener {
 
     private static final String BASE_URL = Config.BASE_URL;
+
+    /** @noinspection FieldCanBeLocal*/
     private RecyclerView recyclerView;
     private AdminQueueAdapter adapter;
     private List<QueueItem> queueList;
+
+    /** @noinspection FieldCanBeLocal*/
     private int adminID;
 
     @Override

@@ -46,6 +46,7 @@ public class Settings extends AppCompatActivity {
 
     private TextView usernameText;
     private ImageView userProfileImage;
+    /** @noinspection FieldCanBeLocal*/
     private View shareAppContainer; // New: container for Share App
     private int userId;
     private static final int PICK_IMAGE_REQUEST = 1001;
@@ -341,6 +342,7 @@ public class Settings extends AppCompatActivity {
             return;
         }
         new AsyncTask<Void, Void, String>() {
+            /** @noinspection CharsetObjectCanBeUsed*/
             @Override
             protected String doInBackground(Void... voids) {
                 try {
@@ -428,6 +430,7 @@ public class Settings extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private void updatePassword(String current, String newPass) {
         new AsyncTask<Void, Void, String>() {
+            /** @noinspection CharsetObjectCanBeUsed*/
             @Override
             protected String doInBackground(Void... voids) {
                 try {

@@ -12,7 +12,10 @@ import java.util.List;
 
 public class AdminQueueAdapter extends RecyclerView.Adapter<AdminQueueAdapter.QueueViewHolder> {
 
+    /** @noinspection FieldMayBeFinal*/
     private List<QueueItem> queueList;
+
+    /** @noinspection FieldMayBeFinal*/
     private OnActionButtonClickListener listener;
 
     public interface OnActionButtonClickListener {

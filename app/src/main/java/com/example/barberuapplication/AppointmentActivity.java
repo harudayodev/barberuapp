@@ -47,6 +47,8 @@ public class AppointmentActivity extends AppCompatActivity {
             queueNumberValueTextView, queueTurnMessage, queueMessageTextView, noAppointmentText;
     private View queueInfoCard;
     private Button cancelButton;
+
+    /** @noinspection FieldMayBeFinal*/
     private Handler handler = new Handler();
     private String customername;
 
@@ -85,6 +87,7 @@ public class AppointmentActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         customername = sharedPreferences.getString("fullname", "User");
 
+        //noinspection ConstantValue
         if (customername != null && !customername.isEmpty()) {
             fetchAppointment();
         } else {
@@ -163,6 +166,7 @@ public class AppointmentActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
         protected String doInBackground(Void... voids) {
+            //noinspection UnusedAssignment
             String result = "";
             HttpURLConnection conn = null;
             try {
@@ -219,6 +223,7 @@ public class AppointmentActivity extends AppCompatActivity {
                         cancelButton.setVisibility(View.VISIBLE);
 
                         customerNameTextView.setText(customername);
+                        //noinspection DataFlowIssue
                         haircutNameTextView.setText(appointment.optString("Haircut_Name", "N/A"));
                         haircutColorNameTextView.setText(appointment.optString("Color_Name", "N/A"));
                         shaveNameTextView.setText(appointment.optString("Shave_Name", "N/A"));
@@ -276,6 +281,7 @@ public class AppointmentActivity extends AppCompatActivity {
         }
     }
 
+    /** @noinspection SameParameterValue*/
     @SuppressLint("MissingPermission")
     private void sendAppointmentNotification(String title, String message) {
         Intent intent = new Intent(this, AppointmentActivity.class);
@@ -310,6 +316,7 @@ public class AppointmentActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
         protected String doInBackground(Void... voids) {
+            //noinspection UnusedAssignment
             String result = "";
             HttpURLConnection conn = null;
             try {

@@ -131,18 +131,38 @@
                 android:maxLines="5"
                 tools:ignore="Autofill,HardcodedText" />
 
-            <!-- Submit Button -->
-            <Button
-                android:id="@+id/submit_review"
+            <!-- Submit Button and Edit Icon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Submit Rating"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:layout_marginTop="12dp"
-                android:padding="12dp"
-                android:backgroundTint="@color/espresso"
-                tools:ignore="HardcodedText" />
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="12dp">
+
+                <Button
+                    android:id="@+id/submit_review"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Submit Rating"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:backgroundTint="@color/espresso"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/edit_review"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/editblack"
+                    android:backgroundTint="@color/espresso"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    tools:ignore="ContentDescription" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

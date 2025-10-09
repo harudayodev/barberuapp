@@ -4,16 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -27,16 +23,17 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
 
     @SuppressLint("StaticFieldLeak")
     private final Context context;
-    private final int userId;
-    private final int shopId;
+    private final int userID;
+    private final int shopID;
     private final float stars;
     private final String reviewContent;
     private final ReviewSubmitListener listener;
 
-    public SubmitReviewTask(Context context, int userId, int shopId, float stars, String reviewContent, ReviewSubmitListener listener) {
+    public SubmitReviewTask(Context context, int userID, int shopID, float stars,
+                            String reviewContent, ReviewSubmitListener listener) {
         this.context = context;
-        this.userId = userId;
-        this.shopId = shopId;
+        this.userID = userID;
+        this.shopID = shopID;
         this.stars = stars;
         this.reviewContent = reviewContent;
         this.listener = listener;
@@ -46,59 +43,71 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... voids) {
         try {
-            URL url = new URL(Config.BASE_URL + "submit_review.php");
+            // 🔹 Replace with your PHP endpoint
+            URL url = new URL("https://barberucuts.site/barberuapp/submit_review.php");
+
+            String data = "userID=" + URLEncoder.encode(String.valueOf(userID), StandardCharsets.UTF_8)
+                    + "&shopID=" + URLEncoder.encode(String.valueOf(shopID), StandardCharsets.UTF_8)
+                    + "&stars=" + URLEncoder.encode(String.valueOf(stars), StandardCharsets.UTF_8)
+                    + "&reviewcontent=" + URLEncoder.encode(reviewContent, StandardCharsets.UTF_8);
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
 
-            String postData = "userID=" + URLEncoder.encode(String.valueOf(userId), StandardCharsets.UTF_8) +
-                    "&shopID=" + URLEncoder.encode(String.valueOf(shopId), StandardCharsets.UTF_8) +
-                    "&stars=" + URLEncoder.encode(String.valueOf(stars), StandardCharsets.UTF_8) +
-                    "&reviewcontent=" + URLEncoder.encode(reviewContent, StandardCharsets.UTF_8);
-
             OutputStream os = conn.getOutputStream();
-            os.write(postData.getBytes());
-            os.flush();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+            writer.write(data);
+            writer.flush();
+            writer.close();
             os.close();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            InputStream is = conn.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
             StringBuilder sb = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+
+            while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-            reader.close();
 
-            String response = sb.toString();
-            Log.d("SubmitReviewTask", "Response: " + response);
+            br.close();
+            is.close();
+            conn.disconnect();
 
-            JSONObject jsonResponse = new JSONObject(response);
-            String status = jsonResponse.getString("status");
-            if ("fail".equals(status)) {
-                return "fail: " + jsonResponse.optString("message", "Unknown error");
-            }
-            return status;
+            return sb.toString();
 
         } catch (Exception e) {
-            Log.e("SubmitReviewTask", "Error during submission: " + e.getMessage());
-            return "error: " + e.getMessage();
+            e.printStackTrace();
+            return "{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}";
         }
     }
 
     @Override
     protected void onPostExecute(String result) {
-        boolean success = "success".equals(result);
+        try {
+            JSONObject json = new JSONObject(result);
+            boolean success = json.optString("status").equalsIgnoreCase("success");
+            String message = json.optString("message", "No message from server.");
 
-        if (success) {
-            Toast.makeText(context, "Review submitted!", Toast.LENGTH_SHORT).show();
-        } else {
-            String message = result.startsWith("fail:") ? result.substring(5) : "Failed to submit review. Please check server logs.";
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-            Log.e("SubmitReviewTask", "Submission failed: " + result);
-        }
+            if (success) {
+                // ✅ Insert this block right here
+                JSONObject data = json.optJSONObject("data");
+                if (data != null && listener != null) {
+                    float newStars = (float) data.optDouble("stars", stars);
+                    String newReview = data.optString("reviewcontent", reviewContent);
+                    listener.onReviewSubmitted(true, newStars, newReview);
+                }
 
-        if (listener != null) {
-            listener.onReviewSubmitted(success, stars, reviewContent);
+                Toast.makeText(context, "Review submitted successfully!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                if (listener != null) listener.onReviewSubmitted(false, stars, message);
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            if (listener != null) listener.onReviewSubmitted(false, stars, e.getMessage());
         }
     }
+
 }

@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.List;
 
 public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingViewHolder>
@@ -16,6 +18,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
 
     private final Context context;
     private final List<HistoryItem> completedList;
+    private java.util.HashMap<Integer, JSONObject> userReviews = new java.util.HashMap<>();
 
     public RatingAdapter(Context context, List<HistoryItem> completedList) {
         this.context = context;
@@ -29,7 +32,9 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         return new RatingViewHolder(view);
     }
 
-    // In RatingAdapter.java
+    public void setUserReviews(java.util.HashMap<Integer, JSONObject> userReviews) {
+        this.userReviews = userReviews;
+    }
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
@@ -43,13 +48,12 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         holder.barberName.setText("Barber: " + item.getBarberName());
         holder.dateValue.setText("Date: " + item.getDateTime());
 
-        // --- Handle Cancelled ---
         if ("cancelled".equalsIgnoreCase(status)) {
             holder.ratingDetailsLayout.setVisibility(View.GONE);
             holder.submitButton.setVisibility(View.GONE);
             holder.reviewText.setVisibility(View.GONE);
             holder.arrowIcon.setVisibility(View.GONE);
-
+            holder.editReview.setVisibility(View.GONE);
             holder.haircutName.setText(item.getHaircutName() + " (Cancelled)");
             int gray = ContextCompat.getColor(context, android.R.color.darker_gray);
             holder.haircutName.setTextColor(gray);
@@ -57,37 +61,91 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
             holder.barberName.setTextColor(gray);
             holder.dateValue.setTextColor(gray);
             holder.itemView.setAlpha(0.6f);
-            return; // Exit here for cancelled items
+            return;
         }
 
-        // --- Completed items (reviewable) ---
         holder.itemView.setAlpha(1f);
-        holder.ratingDetailsLayout.setVisibility(View.VISIBLE);
+        holder.ratingDetailsLayout.setVisibility(View.GONE);
+        holder.arrowIcon.setRotation(0f);
         holder.ratingStars.setVisibility(View.VISIBLE);
         holder.reviewText.setVisibility(View.VISIBLE);
         holder.submitButton.setVisibility(View.VISIBLE);
         holder.arrowIcon.setVisibility(View.VISIBLE);
+        holder.editReview.setVisibility(View.GONE);
 
+        holder.ratingStars.setIsIndicator(false);
         holder.ratingStars.setRating(0f);
-        holder.ratingValue.setText("0.0"); // Reset text view
+        holder.ratingValue.setText("0.0");
+        holder.reviewText.setEnabled(true);
         holder.reviewText.setText("");
         holder.submitButton.setText("Submit Rating");
         holder.submitButton.setEnabled(true);
         holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.espresso));
 
-        // ******************** MOVED THE LISTENER HERE ********************
-        // This listener updates the TextView whenever the user changes the star rating.
-        holder.ratingStars.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-            if (fromUser) {
-                holder.ratingValue.setText(String.format("%.1f", rating));
+        if (userReviews.containsKey(shopID)) {
+            JSONObject review = userReviews.get(shopID);
+            try {
+                //noinspection DataFlowIssue
+                float stars = (float) review.getDouble("stars");
+                String reviewContent = review.getString("reviewcontent");
+
+                holder.ratingStars.setRating(stars);
+                holder.ratingStars.setIsIndicator(true);
+                holder.ratingValue.setText(String.format("%.1f", stars));
+                holder.reviewText.setText(reviewContent);
+                holder.reviewText.setEnabled(false);
+                holder.submitButton.setText("Review Submitted");
+                holder.submitButton.setEnabled(false);
+                holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.darker_gray));
+                holder.editReview.setVisibility(View.VISIBLE);
+
+                fadeIn(holder.ratingStars);
+                fadeIn(holder.reviewText);
+                fadeIn(holder.submitButton);
+
+                holder.editReview.setOnClickListener(v -> {
+                    holder.ratingStars.setIsIndicator(false);
+                    holder.reviewText.setEnabled(true);
+                    holder.submitButton.setText("Submit Rating");
+                    holder.submitButton.setEnabled(false);
+                    holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.darker_gray));
+                    Toast.makeText(context, "You can now edit your review.", Toast.LENGTH_SHORT).show();
+
+                    holder.ratingStars.setOnRatingBarChangeListener((bar, newRating, fromUser) -> {
+                        if (fromUser) {
+                            holder.ratingValue.setText(String.format("%.1f", newRating));
+                            enableSubmit(holder);
+                        }
+                    });
+
+                    holder.reviewText.addTextChangedListener(new android.text.TextWatcher() {
+                        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            enableSubmit(holder);
+                        }
+                        @Override public void afterTextChanged(android.text.Editable s) {}
+                    });
+                });
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        holder.ratingStars.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
+            if (fromUser) holder.ratingValue.setText(String.format("%.1f", rating));
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            boolean isExpanded = holder.ratingDetailsLayout.getVisibility() == View.VISIBLE;
+            if (isExpanded) {
+                collapse(holder.ratingDetailsLayout);
+                rotateArrow(holder.arrowIcon, 180f, 0f);
+            } else {
+                expand(holder.ratingDetailsLayout);
+                rotateArrow(holder.arrowIcon, 0f, 180f);
             }
         });
-        // *****************************************************************
-
-        // Toggle expansion
-        View.OnClickListener toggleListener = v -> toggleExpand(holder);
-        holder.haircutName.setOnClickListener(toggleListener);
-        holder.arrowIcon.setOnClickListener(toggleListener);
 
         // Submit rating
         holder.submitButton.setOnClickListener(v -> {
@@ -99,24 +157,49 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
                 return;
             }
 
-            int userID = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                    .getInt("userID", 0);
-
+            int userID = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE).getInt("userID", 0);
             if (userID == 0) {
                 Toast.makeText(context, "Error: User not logged in.", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            new SubmitReviewTask(context, userID, shopID, stars, reviewText,
-                    (success, submittedStars, submittedReviewContent) -> {
-                        if (v.getTag() instanceof Integer && (Integer) v.getTag() == position) {
-                            handleReviewSubmissionUI(holder, success, submittedStars, submittedReviewContent);
-                        }
-                    }).execute();
-
             holder.submitButton.setEnabled(false);
             Toast.makeText(context, "Submitting review...", Toast.LENGTH_SHORT).show();
+
+            new SubmitReviewTask(context, userID, shopID, stars, reviewText,
+                    (success, submittedStars, submittedReviewContent) -> {
+                        if (success) {
+                            try {
+                                JSONObject newReview = new JSONObject();
+                                newReview.put("stars", submittedStars);
+                                newReview.put("reviewcontent", submittedReviewContent);
+                                userReviews.put(shopID, newReview);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            handleReviewSubmissionUI(holder, true, submittedStars, submittedReviewContent);
+                            notifyItemChanged(position);
+                        } else {
+                            handleReviewSubmissionUI(holder, false, stars, submittedReviewContent);
+                        }
+                    }).execute();
         });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void enableSubmit(RatingViewHolder holder) {
+        holder.submitButton.setText("Submit Rating");
+        holder.submitButton.setEnabled(true);
+        holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.espresso));
+    }
+
+    private void rotateArrow(ImageView arrow, float from, float to) {
+        RotateAnimation rotate = new RotateAnimation(from, to,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(300);
+        rotate.setFillAfter(true);
+        arrow.startAnimation(rotate);
     }
 
     @SuppressLint("SetTextI18n")
@@ -129,34 +212,27 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
             holder.submitButton.setText("Review Submitted");
             holder.submitButton.setEnabled(false);
             holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.darker_gray));
+            holder.editReview.setVisibility(View.VISIBLE);
+
+            fadeIn(holder.ratingStars);
+            fadeIn(holder.reviewText);
+            fadeIn(holder.submitButton);
         } else {
-            // Keep button enabled UNLESS it's a duplicate review
-            if (reviewContent.contains("already submitted")) {
-                holder.submitButton.setText("Already Reviewed");
-                holder.submitButton.setEnabled(false);
-                holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.darker_gray));
-            } else {
-                holder.submitButton.setEnabled(true);
-            }
+            holder.submitButton.setEnabled(true);
         }
     }
 
-    @Override
-    public void onReviewSubmitted(boolean success, float stars, String reviewContent) {
+    private void fadeIn(View view) {
+        view.setAlpha(0f);
+        view.animate().alpha(1f).setDuration(400).setListener(null);
     }
+
+    @Override
+    public void onReviewSubmitted(boolean success, float stars, String reviewContent) {}
 
     @Override
     public int getItemCount() {
         return completedList.size();
-    }
-
-    private void toggleExpand(RatingViewHolder holder) {
-        boolean isExpanded = holder.ratingDetailsLayout.getVisibility() == View.VISIBLE;
-        if (isExpanded) {
-            collapse(holder.ratingDetailsLayout);
-        } else {
-            expand(holder.ratingDetailsLayout);
-        }
     }
 
     private void expand(final View v) {
@@ -167,8 +243,9 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height =
-                        interpolatedTime == 1 ? ViewGroup.LayoutParams.WRAP_CONTENT : (int) (targetHeight * interpolatedTime);
+                v.getLayoutParams().height = (interpolatedTime == 1)
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int) (targetHeight * interpolatedTime);
                 v.requestLayout();
             }
         };
@@ -181,9 +258,8 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
+                if (interpolatedTime == 1) v.setVisibility(View.GONE);
+                else {
                     v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
                     v.requestLayout();
                 }
@@ -199,7 +275,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         EditText reviewText;
         Button submitButton;
         LinearLayout ratingDetailsLayout;
-        ImageView arrowIcon;
+        ImageView arrowIcon, editReview;
 
         public RatingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -213,6 +289,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
             ratingDetailsLayout = itemView.findViewById(R.id.rating_details_layout);
             arrowIcon = itemView.findViewById(R.id.arrow_icon);
             ratingValue = itemView.findViewById(R.id.rating_value);
+            editReview = itemView.findViewById(R.id.edit_review);
         }
     }
 }

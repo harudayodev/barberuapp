@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.nio.charset.StandardCharsets;
 
@@ -104,6 +105,78 @@ public class Rating extends AppCompatActivity {
             }
         }
 
+        @SuppressLint("StaticFieldLeak")
+        private class FetchUserReviewsTask extends AsyncTask<Void, Void, String> {
+            private final int userID;
+
+            FetchUserReviewsTask(int userID) {
+                this.userID = userID;
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    URL url = new URL(Config.BASE_URL + "get_reviews.php");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("POST");
+                    conn.setDoOutput(true);
+
+                    String data = "userID=" + URLEncoder.encode(String.valueOf(userID), StandardCharsets.UTF_8);
+                    OutputStream os = conn.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                    writer.write(data);
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null)
+                        sb.append(line);
+                    reader.close();
+                    conn.disconnect();
+
+                    return sb.toString();
+
+                } catch (Exception e) {
+                    Log.e("FetchUserReviewsTask", "Error: " + e.getMessage());
+                    return "Error: " + e.getMessage();
+                }
+            }
+
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            protected void onPostExecute(String result) {
+                if (result == null || result.startsWith("Error:")) return;
+
+                try {
+                    JSONObject jsonResponse = new JSONObject(result);
+                    if ("success".equals(jsonResponse.getString("status"))) {
+                        JSONObject reviewsObj = jsonResponse.getJSONObject("reviews");
+                        java.util.HashMap<Integer, JSONObject> reviewMap = new java.util.HashMap<>();
+
+                        Iterator<String> keys = reviewsObj.keys();
+                        while (keys.hasNext()) {
+                            String key = keys.next();
+                            JSONObject obj = reviewsObj.getJSONObject(key);
+                            reviewMap.put(Integer.parseInt(key), obj);
+                        }
+
+                        // Once both lists are ready, update adapter
+                        if (ratingAdapter != null) {
+                            ratingAdapter.setUserReviews(reviewMap);
+                            ratingAdapter.notifyDataSetChanged();
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.e("FetchUserReviewsTask", "Parse error: " + e.getMessage());
+                }
+            }
+        }
+
+
         @Override
         protected void onPostExecute(String result) {
             if (result != null && !result.startsWith("Error:")) {
@@ -135,6 +208,10 @@ public class Rating extends AppCompatActivity {
                         if (!completedList.isEmpty()) {
                             ratingAdapter = new RatingAdapter(Rating.this, completedList);
                             ratingRecyclerView.setAdapter(ratingAdapter);
+
+                            int userID = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                                    .getInt("userID", 0);
+                            new FetchUserReviewsTask(userID).execute();
                         } else {
                             ratingRecyclerView.setVisibility(View.GONE);
                             Toast.makeText(Rating.this,

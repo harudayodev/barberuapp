@@ -28,6 +28,7 @@
         android:layout_height="49dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrowreturn"
@@ -48,7 +49,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/homebar"
         android:layout_width="0dp"
-        android:layout_height="60dp"  android:background="@color/espresso"
+        android:layout_height="60dp"
+        android:background="@color/espresso"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -58,7 +60,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/home"
-            app:layout_constraintBottom_toBottomOf="parent"  app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />

@@ -19,13 +19,25 @@ public class ReviewActivity extends AppCompatActivity {
         ImageView homebutton = findViewById(R.id.homeview);
 
         returnButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ReviewActivity.this, HomepageActivity.class);
+            String role = getIntent().getStringExtra("role");
+            Intent intent;
+            if ("admin".equals(role)) {
+                intent = new Intent(ReviewActivity.this, HomepageAdmin.class);
+            } else {
+                intent = new Intent(ReviewActivity.this, HomepageActivity.class);
+            }
             startActivity(intent);
             finish();
         });
 
         homebutton.setOnClickListener(v -> {
-            Intent intent = new Intent(ReviewActivity.this, HomepageActivity.class);
+            String role = getIntent().getStringExtra("role");
+            Intent intent;
+            if ("admin".equals(role)) {
+                intent = new Intent(ReviewActivity.this, HomepageAdmin.class);
+            } else {
+                intent = new Intent(ReviewActivity.this, HomepageActivity.class);
+            }
             startActivity(intent);
             finish();
         });

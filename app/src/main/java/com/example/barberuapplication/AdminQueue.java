@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStream;
@@ -35,28 +34,26 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
     private RecyclerView recyclerView;
     private AdminQueueAdapter adapter;
     private List<QueueItem> queueList;
-    private int adminID; // Must be retrieved from SharedPreferences or login data
+    private int adminID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adminqueue); // Assuming you used the suggested XML name 'activity_admin_queue'
+        setContentView(R.layout.activity_adminqueue);
 
-        // Assume adminID is stored in SharedPreferences after login
-        int employeeID = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("employeeID", -1);
+        // Get admin ID from SharedPreferences
+        adminID = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("employee_id", -1);
 
         ImageView returnButton = findViewById(R.id.return_button);
-        ImageView homeButton   = findViewById(R.id.homeview);
+        ImageView homeButton = findViewById(R.id.homeview);
 
         returnButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminQueue.this, HomepageAdmin.class);
-            startActivity(intent);
+            startActivity(new Intent(AdminQueue.this, HomepageAdmin.class));
             finish();
         });
 
         homeButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminQueue.this, HomepageAdmin.class);
-            startActivity(intent);
+            startActivity(new Intent(AdminQueue.this, HomepageAdmin.class));
             finish();
         });
 
@@ -69,14 +66,10 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
         recyclerView = findViewById(R.id.admin_queue_recyclerview);
         queueList = new ArrayList<>();
         adapter = new AdminQueueAdapter(queueList, this);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Set up the return button (or other navigation)
-        findViewById(R.id.return_button).setOnClickListener(v -> finish());
-
-        new FetchQueueTask().execute(String.valueOf(employeeID));
+        new FetchQueueTask().execute(String.valueOf(adminID));
     }
 
     @Override
@@ -88,10 +81,6 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
     public void onDeclineClick(int queueID, int position) {
         new UpdateQueueStatusTask(queueID, "decline", position).execute();
     }
-
-    // =========================================================================
-    // MISSING fetchData METHOD (REQUIRED) - Reinserted from previous context
-    // =========================================================================
 
     @SuppressLint("NewApi")
     private String fetchData(String requestUrl, Map<String, String> postData) {
@@ -126,7 +115,6 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
                 os.close();
             }
 
-
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
@@ -144,15 +132,10 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
         } catch (Exception e) {
             Log.e("fetchData", "Error: " + e.getMessage(), e);
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (Exception ignored) {
-                }
-            }
-            if (connection != null) {
-                connection.disconnect();
-            }
+            try {
+                if (reader != null) reader.close();
+            } catch (Exception ignored) {}
+            if (connection != null) connection.disconnect();
         }
         return null;
     }
@@ -161,9 +144,8 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
     private class FetchQueueTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String adminId = params[0];
             Map<String, String> postData = new HashMap<>();
-            postData.put("employeeID", adminId);
+            postData.put("employeeID", params[0]);
             return fetchData(BASE_URL + "get_admin_queue.php", postData);
         }
 
@@ -178,45 +160,38 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
                         queueList.clear();
                         for (int i = 0; i < queueArray.length(); i++) {
                             JSONObject item = queueArray.getJSONObject(i);
-
-                            int id = item.getInt("QueueID");
-                            String name = item.getString("name");
-                            String barber = item.getString("barber");
-                            String dateTime = item.getString("date_time");
-                            String haircutName = item.getString("Haircut_Name");
-                            String colorName = item.optString("Color_Name", "");
-
-                            queueList.add(new QueueItem(id, name, barber, dateTime, haircutName, colorName));
-
-
-                            queueList.add(new QueueItem(id, name, barber, dateTime, haircutName, colorName));
+                            queueList.add(new QueueItem(
+                                    item.getInt("QueueID"),
+                                    item.getString("name"),
+                                    item.getString("barber"),
+                                    item.getString("date_time"),
+                                    item.getString("Haircut_Name"),
+                                    item.optString("Color_Name", ""),
+                                    item.optString("Shave_Name", "")
+                            ));
                         }
                         adapter.notifyDataSetChanged();
+
                         if (queueList.isEmpty()) {
-                            // Fixed reference from AdminQueueActivity.this to AdminQueue.this
                             Toast.makeText(AdminQueue.this, "No appointments in queue.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        // Fixed reference from AdminQueueActivity.this to AdminQueue.this
                         Toast.makeText(AdminQueue.this, jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     Log.e("FetchQueueTask", "JSON parsing error: " + e.getMessage());
-                    // Fixed reference from AdminQueueActivity.this to AdminQueue.this
                     Toast.makeText(AdminQueue.this, "Error processing queue data.", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                // Fixed reference from AdminQueueActivity.this to AdminQueue.this
                 Toast.makeText(AdminQueue.this, "Failed to connect to server.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(AdminQueue.this, HomepageAdmin.class);
-        startActivity(intent);
+        super.onBackPressed();
+        startActivity(new Intent(AdminQueue.this, HomepageAdmin.class));
         finish();
     }
 
@@ -240,16 +215,13 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
             return fetchData(BASE_URL + "update_queue_status.php", postData);
         }
 
-
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
                 try {
                     JSONObject jsonResponse = new JSONObject(result);
                     Toast.makeText(AdminQueue.this, jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
-
                     if ("success".equals(jsonResponse.getString("status"))) {
-                        // Remove the item from the list visually
                         adapter.removeItem(position);
                     }
                 } catch (JSONException e) {
@@ -259,8 +231,6 @@ public class AdminQueue extends AppCompatActivity implements AdminQueueAdapter.O
             } else {
                 Toast.makeText(AdminQueue.this, "Server error during status update.", Toast.LENGTH_SHORT).show();
             }
-
-
         }
     }
 }

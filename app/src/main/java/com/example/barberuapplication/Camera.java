@@ -71,6 +71,9 @@ public class Camera extends AppCompatActivity {
     private CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
 
     private Bitmap capturedBitmap = null;
+    private boolean isFrontCamera = true;
+
+    /** @noinspection FieldCanBeLocal*/
     private String customerName;
     private FilterAdapter filterAdapter;
     private int selectedFilterPosition = RecyclerView.NO_POSITION;
@@ -99,6 +102,9 @@ public class Camera extends AppCompatActivity {
         if (customerName == null) customerName = "Guest";
 
         setupFilterList();
+
+        captureButton.setAlpha(0.5f);
+        captureButton.setEnabled(false);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -152,16 +158,41 @@ public class Camera extends AppCompatActivity {
                 selectedFilterPosition = RecyclerView.NO_POSITION;
                 filterAdapter.setSelectedPosition(RecyclerView.NO_POSITION);
                 selectedHaircutLabel.setText("No haircut selected");
+                setCaptureButtonEnabled(false);  // use animated helper
             } else {
                 showStyledToast(haircut.getName() + " selected");
                 selectedFilterPosition = position;
                 filterAdapter.setSelectedPosition(position);
                 selectedHaircutLabel.setText("Selected: " + haircut.getName());
+                setCaptureButtonEnabled(true);   // use animated helper
             }
         });
+
         filterList.setAdapter(filterAdapter);
 
         fetchHaircutsFromServer(haircutList);
+    }
+
+    private void setCaptureButtonEnabled(boolean enabled) {
+        float targetAlpha = enabled ? 1f : 0.5f;
+
+        captureButton.animate()
+                .alpha(targetAlpha)
+                .setDuration(200)
+                .start();
+
+        captureButton.setEnabled(enabled);
+
+        // Add pulse animation when enabling
+        if (enabled) {
+            captureButton.animate()
+                    .scaleX(1.1f)
+                    .scaleY(1.1f)
+                    .setDuration(150)
+                    .withEndAction(() ->
+                            captureButton.animate().scaleX(1f).scaleY(1f).setDuration(150))
+                    .start();
+        }
     }
 
     private void fetchHaircutsFromServer(List<Haircut> haircutList) {
@@ -200,7 +231,13 @@ public class Camera extends AppCompatActivity {
     }
 
     private void setupButtonClickListeners() {
-        captureButton.setOnClickListener(v -> takePhoto());
+        captureButton.setOnClickListener(v -> {
+            if (selectedFilterPosition == RecyclerView.NO_POSITION) {
+                showStyledToast("Pick a filter first"); // 🔹 Show toast if no filter selected
+            } else {
+                takePhoto(); // 🔹 Proceed to capture
+            }
+        });
 
         retakeButton.setOnClickListener(v -> {
             capturedImageView.setVisibility(View.GONE);
@@ -218,17 +255,39 @@ public class Camera extends AppCompatActivity {
             if (capturedBitmap != null) {
                 saveImageToGallery(capturedBitmap);
             }
+
+            if (selectedFilterPosition == RecyclerView.NO_POSITION) {
+                showStyledToast("Please select a haircut first");
+                return;
+            }
+
+            Haircut selectedHaircut = filterAdapter.getHaircutList().get(selectedFilterPosition);
+
             Intent intent = new Intent(Camera.this, BarberShopStorePicker.class);
-            intent.putExtra("customername", customerName);
+            intent.putExtra("mode", "camera");
+            intent.putExtra("selectedHaircutID", selectedHaircut.getId());
+            intent.putExtra("selectedHaircutName", selectedHaircut.getName());
             startActivity(intent);
         });
 
         rotateButton.setOnClickListener(v -> {
-            cameraSelector = (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
-                    ? CameraSelector.DEFAULT_FRONT_CAMERA
-                    : CameraSelector.DEFAULT_BACK_CAMERA;
+            // Toggle rotation
+            float targetRotation = isFrontCamera ? 180f : 0f;
+            rotateButton.animate()
+                    .rotation(targetRotation)
+                    .setDuration(300)
+                    .start();
+
+            // Switch camera
+            cameraSelector = isFrontCamera
+                    ? CameraSelector.DEFAULT_BACK_CAMERA
+                    : CameraSelector.DEFAULT_FRONT_CAMERA;
             startCamera();
+
+            // Update state
+            isFrontCamera = !isFrontCamera;
         });
+
 
         returnButton.setOnClickListener(v -> {
             Intent intent = new Intent(Camera.this, HomepageActivity.class);
@@ -236,6 +295,7 @@ public class Camera extends AppCompatActivity {
             finish();
         });
     }
+
 
     private void startCamera() {
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
@@ -276,10 +336,8 @@ public class Camera extends AppCompatActivity {
                             matrix.postScale(-1f, 1f, bitmap.getWidth() / 2f, bitmap.getHeight() / 2f);
                         }
 
-                        Bitmap rotatedBitmap = Bitmap.createBitmap(
+                        capturedBitmap = Bitmap.createBitmap(
                                 bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-                        capturedBitmap = rotatedBitmap;
 
                         runOnUiThread(() -> {
                             previewView.setVisibility(View.GONE);

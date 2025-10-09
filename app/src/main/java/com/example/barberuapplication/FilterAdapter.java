@@ -22,6 +22,10 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
         void onFilterClick(Haircut haircut, int position);
     }
 
+    public List<Haircut> getHaircutList() {
+        return haircutList;
+    }
+
     public FilterAdapter(List<Haircut> haircutList, OnFilterClickListener listener) {
         this.haircutList = haircutList;
         this.listener = listener;

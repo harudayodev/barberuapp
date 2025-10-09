@@ -54,9 +54,13 @@ dependencies {
     implementation(libs.face.detection)
     implementation(libs.flexbox)
 
+    //noinspection UseTomlInstead
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    //noinspection UseTomlInstead
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 
+    //noinspection UseTomlInstead
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    //noinspection UseTomlInstead
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 }

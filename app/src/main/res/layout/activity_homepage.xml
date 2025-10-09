@@ -373,6 +373,7 @@
             app:layout_constraintStart_toStartOf="@+id/historybg2"
             app:layout_constraintTop_toBottomOf="@+id/historybg2"
             tools:ignore="HardcodedText,TextContrastCheck" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -383,15 +384,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tools_container">
 
+        <!-- STORE -->
         <ImageView
-            android:id="@+id/aboutbg"
+            android:id="@+id/storebg"
             android:layout_width="63dp"
             android:layout_height="59dp"
             android:layout_marginStart="41dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/iconcircle"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/storelogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="@+id/storebg"
+            app:layout_constraintEnd_toEndOf="@+id/storebg"
+            app:layout_constraintStart_toStartOf="@+id/storebg"
+            app:layout_constraintTop_toTopOf="@+id/storebg"
+            app:srcCompat="@drawable/store"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/storeservices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Store"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/storebg"
+            app:layout_constraintStart_toStartOf="@+id/storebg"
+            app:layout_constraintTop_toBottomOf="@+id/storebg"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+
+        <!-- ABOUT -->
+        <ImageView
+            android:id="@+id/aboutbg"
+            android:layout_width="63dp"
+            android:layout_height="59dp"
+            android:layout_marginStart="40dp"
+            app:layout_constraintStart_toEndOf="@+id/storebg"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/iconcircle"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
 
         <ImageView
             android:id="@+id/aboutlogo"
@@ -416,6 +453,7 @@
             app:layout_constraintStart_toStartOf="@+id/aboutbg"
             app:layout_constraintTop_toBottomOf="@+id/aboutbg"
             tools:ignore="HardcodedText" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

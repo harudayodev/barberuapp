@@ -1,5 +1,6 @@
 package com.example.barberuapplication;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class AdminQueueAdapter extends RecyclerView.Adapter<AdminQueueAdapter.Qu
         return new QueueViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull QueueViewHolder holder, int position) {
         QueueItem item = queueList.get(position);
@@ -43,11 +45,17 @@ public class AdminQueueAdapter extends RecyclerView.Adapter<AdminQueueAdapter.Qu
         }
         holder.textHaircutName.setText(haircutDetail);
 
-        // Format Barber and Time
+        // Shave
+        if (!item.getShaveName().isEmpty()) {
+            holder.textShaveName.setText("Shave: " + item.getShaveName());
+            holder.textShaveName.setVisibility(View.VISIBLE);
+        } else {
+            holder.textShaveName.setVisibility(View.GONE);
+        }
+
         String barberAndTime = String.format("Barber: %s | %s", item.getBarber(), item.getDateTime());
         holder.textBarberTime.setText(barberAndTime);
 
-        // Set click listeners for buttons
         holder.buttonAccept.setOnClickListener(v -> listener.onAcceptClick(item.getQueueID(), holder.getAdapterPosition()));
         holder.buttonDecline.setOnClickListener(v -> listener.onDeclineClick(item.getQueueID(), holder.getAdapterPosition()));
     }
@@ -57,7 +65,6 @@ public class AdminQueueAdapter extends RecyclerView.Adapter<AdminQueueAdapter.Qu
         return queueList.size();
     }
 
-    // Method to remove item from the list after action
     public void removeItem(int position) {
         queueList.remove(position);
         notifyItemRemoved(position);
@@ -67,6 +74,7 @@ public class AdminQueueAdapter extends RecyclerView.Adapter<AdminQueueAdapter.Qu
     static class QueueViewHolder extends RecyclerView.ViewHolder {
         TextView textCustomerName;
         TextView textHaircutName;
+        TextView textShaveName;
         TextView textBarberTime;
         Button buttonAccept;
         Button buttonDecline;
@@ -75,6 +83,7 @@ public class AdminQueueAdapter extends RecyclerView.Adapter<AdminQueueAdapter.Qu
             super(itemView);
             textCustomerName = itemView.findViewById(R.id.text_customer_name);
             textHaircutName = itemView.findViewById(R.id.text_haircut_name);
+            textShaveName = itemView.findViewById(R.id.text_shave_name);
             textBarberTime = itemView.findViewById(R.id.text_barber_time);
             buttonAccept = itemView.findViewById(R.id.button_accept);
             buttonDecline = itemView.findViewById(R.id.button_decline);

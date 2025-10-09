@@ -81,20 +81,22 @@ public class MainActivity extends AppCompatActivity {
                     String employeeId = data.optString("employee_id", null);
                     String shopId = data.optString("shop_id", null);
                     String shopName = data.optString("shop_name", null);
+                    //noinspection ConstantValue
+                    int employeeIdInt = employeeId != null ? Integer.parseInt(employeeId) : -1;
 
                     // ⭐ CRITICAL FIX: Changed key from "id" to "userID"
                     getSharedPreferences("UserPrefs", MODE_PRIVATE)
                             .edit()
-                            .putInt("userID", userId) // <-- This now matches RatingAdapter.java
+                            .putInt("userID", userId)
                             .putString("fullname", fullname)
                             .putString("role", role)
-                            .putString("employee_id", employeeId)
+                            .putInt("employee_id", employeeIdInt)
                             .putString("shop_id", shopId)
                             .putString("shop_name", shopName)
                             .apply();
 
                     Intent intent;
-                    if ("admin".equalsIgnoreCase(role)) {
+                    if ("employee".equalsIgnoreCase(role)) {
                         intent = new Intent(MainActivity.this, HomepageAdmin.class);
                         intent.putExtra("employee_id", employeeId);
                         intent.putExtra("shop_id", shopId);

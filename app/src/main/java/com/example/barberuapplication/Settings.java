@@ -74,6 +74,13 @@ public class Settings extends AppCompatActivity {
         ImageView editProfile = findViewById(R.id.editprofile);
         editProfile.setOnClickListener(v -> showEditDialog());
 
+        View signOutContainer = findViewById(R.id.sign_out_container);
+        View signOutText = findViewById(R.id.sign_out_text);
+        View signOutIcon = findViewById(R.id.sign_out_icon);
+
+        View.OnClickListener logoutListener = v -> showLogoutDialog();
+        signOutContainer.setOnClickListener(v -> showLogoutDialog());
+
         // Change password
         findViewById(R.id.change_password_container).setOnClickListener(v -> showChangePasswordDialog());
 
@@ -93,6 +100,30 @@ public class Settings extends AppCompatActivity {
         usernameText.setText(fullname);
         loadUserProfile();
     }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(Settings.this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // Clear session data
+                    SharedPreferences.Editor editor = getSharedPreferences("UserPrefs", MODE_PRIVATE).edit();
+                    editor.clear();
+                    editor.apply();
+
+                    // Redirect to login page
+                    Intent intent = new Intent(Settings.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+
+                    // Display logout success message
+                    Toast.makeText(Settings.this, "You have been logged out successfully.", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
 
     /** -------------------- SHARE APP -------------------- */
     private void shareApp() {

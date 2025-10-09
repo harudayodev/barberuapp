@@ -35,7 +35,11 @@ import java.nio.charset.StandardCharsets;
 public class History extends AppCompatActivity {
 
     private RecyclerView historyRecyclerView;
+    /** @noinspection FieldCanBeLocal*/
+
     private HistoryAdapter historyAdapter;
+    /** @noinspection FieldCanBeLocal*/
+
     private List<HistoryItem> historyList;
 
     @Override
@@ -62,6 +66,7 @@ public class History extends AppCompatActivity {
         new FetchHistoryTask(customername).execute();
     }
 
+    /** @noinspection UnusedAssignment*/
     @SuppressLint("StaticFieldLeak")
     private class FetchHistoryTask extends AsyncTask<Void, Void, String> {
         private final String customername;

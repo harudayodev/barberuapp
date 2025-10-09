@@ -13,8 +13,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 public class ResetPassActivity extends AppCompatActivity {
 
     private EditText emailInput;
-    private Button sendEmailButton, returnButton;
+
+    /** @noinspection FieldCanBeLocal*/
+    private Button sendEmailButton,  /** @noinspection FieldCanBeLocal*/
+    returnButton;
     private ConstraintLayout modalOverlay;
+
+    /** @noinspection FieldCanBeLocal*/
     private Button modalDismissButton;
 
     @SuppressLint("MissingInflatedId")
@@ -32,33 +37,24 @@ public class ResetPassActivity extends AppCompatActivity {
         modalDismissButton = findViewById(R.id.modal_dismiss_button);
 
         // Set up click listener for the back button
-        returnButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Close the activity and go back
-            }
+        returnButton.setOnClickListener(v -> {
+            finish(); // Close the activity and go back
         });
 
         // Set up click listener for the send email button
-        sendEmailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailInput.getText().toString().trim();
-                if (email.isEmpty()) {
-                    Toast.makeText(ResetPassActivity.this, "Please enter your email.", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Simulate a successful email sent and show the custom alert
-                    modalOverlay.setVisibility(View.VISIBLE);
-                }
+        sendEmailButton.setOnClickListener(v -> {
+            String email = emailInput.getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(ResetPassActivity.this, "Please enter your email.", Toast.LENGTH_SHORT).show();
+            } else {
+                // Simulate a successful email sent and show the custom alert
+                modalOverlay.setVisibility(View.VISIBLE);
             }
         });
 
         // Set up click listener for the modal's dismiss button
-        modalDismissButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                modalOverlay.setVisibility(View.GONE); // Hide the custom alert
-            }
+        modalDismissButton.setOnClickListener(v -> {
+            modalOverlay.setVisibility(View.GONE); // Hide the custom alert
         });
     }
 }

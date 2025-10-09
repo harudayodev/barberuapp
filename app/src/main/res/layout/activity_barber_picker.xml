@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BarberShopStorePicker"
-    tools:ignore="VisualLintBounds">
+    tools:context=".BarberPicker">
 
     <ImageView
         android:id="@+id/background_image"
@@ -14,13 +13,8 @@
         android:layout_height="match_parent"
         android:src="@drawable/bg3"
         android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-        android:contentDescription="@null"
         android:alpha="0.9"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        tools:ignore="ContentDescription" />
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBar"
@@ -35,101 +29,56 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:gravity="center_vertical">
 
             <ImageView
                 android:id="@+id/return_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="0dp"
-                android:src="@drawable/arrowreturn"
-                android:contentDescription="Back"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                tools:ignore="HardcodedText" />
+                android:src="@drawable/arrowreturn"
+                tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
-            <!-- Title next to arrow -->
             <TextView
                 android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Find a Barbershop"
+                android:text="Choose a Barber"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
                 tools:ignore="HardcodedText,TextContrastCheck" />
         </LinearLayout>
-
     </com.google.android.material.appbar.MaterialToolbar>
 
-
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchLayout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="10dp"
-        android:hint="Search store or location"
-        android:textColorHint="#999999"
-        app:startIconDrawable="@drawable/ic_search"
-        app:startIconTint="#999999"
-        app:endIconMode="clear_text"
-        app:boxStrokeColor="#4A4A4A"
-        app:boxBackgroundColor="@color/white"
-        app:boxCornerRadiusTopStart="24dp"
-        app:boxCornerRadiusTopEnd="24dp"
-        app:boxCornerRadiusBottomStart="24dp"
-        app:boxCornerRadiusBottomEnd="24dp"
-        app:layout_constraintTop_toBottomOf="@id/topAppBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:paddingStart="40dp"
-            android:paddingEnd="12dp"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
-    </com.google.android.material.textfield.TextInputLayout>
-
     <TextView
-        android:id="@+id/tvNearbyStores"
+        android:id="@+id/tvAvailableBarbers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
-        android:text="Nearby Barbershops"
+        android:text="Available Barbers"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout"
+        app:layout_constraintTop_toBottomOf="@id/topAppBar"
         tools:ignore="HardcodedText,TextContrastCheck" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/barbershopRecyclerView"
+        android:id="@+id/barbersRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/homebar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNearbyStores"
+        app:layout_constraintTop_toBottomOf="@id/tvAvailableBarbers"
         tools:ignore="SpeakableTextPresentCheck"
-        tools:listitem="@layout/item_barbershops" />
+        tools:listitem="@layout/item_barbers" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/homebar"
@@ -158,5 +107,4 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_end="48dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

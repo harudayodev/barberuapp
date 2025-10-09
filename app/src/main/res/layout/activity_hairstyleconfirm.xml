@@ -59,8 +59,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/page_title_confirm">
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,14 +93,20 @@
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
-                    <Spinner
+                    <TextView
                         android:id="@+id/haircut_name_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
                         android:background="@drawable/rounded_edittext"
-                        android:spinnerMode="dropdown"
-                        tools:ignore="TouchTargetSizeCheck" />
+                        android:padding="8dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:longClickable="false"
+                        android:layout_marginBottom="16dp"
+                        tools:ignore="HardcodedText" />
 
                     <!-- Haircut Color -->
                     <TextView
@@ -115,14 +119,20 @@
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
-                    <Spinner
+                    <TextView
                         android:id="@+id/haircut_color_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
                         android:background="@drawable/rounded_edittext"
-                        android:spinnerMode="dropdown"
-                        tools:ignore="TouchTargetSizeCheck" />
+                        android:padding="8dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:longClickable="false"
+                        android:layout_marginBottom="16dp"
+                        tools:ignore="HardcodedText" />
 
                     <!-- Shave -->
                     <TextView
@@ -135,14 +145,20 @@
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
-                    <Spinner
+                    <TextView
                         android:id="@+id/shave_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
                         android:background="@drawable/rounded_edittext"
-                        android:spinnerMode="dropdown"
-                        tools:ignore="TouchTargetSizeCheck" />
+                        android:padding="8dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:longClickable="false"
+                        android:layout_marginBottom="16dp"
+                        tools:ignore="HardcodedText" />
 
                     <!-- Branch -->
                     <TextView
@@ -155,14 +171,20 @@
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
-                    <Spinner
+                    <TextView
                         android:id="@+id/branch_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
                         android:background="@drawable/rounded_edittext"
-                        android:spinnerMode="dropdown"
-                        tools:ignore="TouchTargetSizeCheck" />
+                        android:padding="8dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:longClickable="false"
+                        android:layout_marginBottom="16dp"
+                        tools:ignore="HardcodedText" />
 
                     <!-- Barber -->
                     <TextView
@@ -175,16 +197,22 @@
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
-                    <Spinner
+                    <TextView
                         android:id="@+id/barber_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
                         android:background="@drawable/rounded_edittext"
-                        android:spinnerMode="dropdown"
-                        tools:ignore="TouchTargetSizeCheck" />
+                        android:padding="8dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:longClickable="false"
+                        android:layout_marginBottom="16dp"
+                        tools:ignore="HardcodedText" />
 
-                    <!-- Date & Time -->
+                    <!-- Date & Time (Editable) -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -209,7 +237,6 @@
                         android:textStyle="italic"
                         tools:ignore="HardcodedText,TextContrastCheck" />
 
-
                     <!-- Customer Name -->
                     <TextView
                         android:layout_width="wrap_content"
@@ -230,6 +257,7 @@
                         android:hint="John Doe"
                         android:padding="8dp"
                         android:textSize="16sp"
+                        android:textColor="@color/black"
                         tools:ignore="HardcodedText,TextContrastCheck" />
 
                 </LinearLayout>

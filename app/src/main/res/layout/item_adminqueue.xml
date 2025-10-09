@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -35,8 +34,7 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/text_customer_name_label"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="John Doe" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <!-- Haircut -->
         <TextView
@@ -58,8 +56,17 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/text_haircut_label"
-            app:layout_constraintTop_toTopOf="@+id/text_haircut_label"
-            tools:text="Classic Fade (Black)" />
+            app:layout_constraintTop_toTopOf="@+id/text_haircut_label"/>
+
+        <!-- Shave -->
+        <TextView
+            android:id="@+id/text_shave_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@+id/text_haircut_name"
+            app:layout_constraintTop_toBottomOf="@+id/text_haircut_name"/>
 
         <!-- Barber + Date/Time -->
         <TextView
@@ -71,8 +78,7 @@
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_haircut_label"
-            tools:text="Barber: Jane Smith | 10:30 AM (2025-10-20)" />
+            app:layout_constraintTop_toBottomOf="@+id/text_shave_name"/>
 
         <!-- Action Buttons -->
         <Button
@@ -105,5 +111,4 @@
             tools:ignore="HardcodedText,TextContrastCheck,VisualLintButtonSize" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

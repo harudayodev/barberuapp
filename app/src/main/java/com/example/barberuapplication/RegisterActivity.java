@@ -51,30 +51,33 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+            if (password.length() < 8) {
+                Toast.makeText(this, "Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (!termsCheckbox.isChecked()) {
                 Toast.makeText(this, "Please agree to the Terms & Conditions", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            dbHelper.registerUser(fname, lname, email, password, (status, message, data) -> {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            dbHelper.registerUser(fname, lname, email, password, (status, message, data) -> runOnUiThread(() -> {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
-                    if ("success".equalsIgnoreCase(status)) {
-                        // Clear fields
-                        fnameInput.setText("");
-                        lnameInput.setText("");
-                        emailInput.setText("");
-                        passwordInput.setText("");
-                        confirmpassInput.setText("");
+                if ("success".equalsIgnoreCase(status)) {
+                    // Clear fields
+                    fnameInput.setText("");
+                    lnameInput.setText("");
+                    emailInput.setText("");
+                    passwordInput.setText("");
+                    confirmpassInput.setText("");
 
-                        // Redirect to login
-                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-            });
+                    // Redirect to login
+                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }));
         });
 
         signInText.setOnClickListener(v -> {

@@ -30,7 +30,11 @@ import java.nio.charset.StandardCharsets;
 public class Rating extends AppCompatActivity {
 
     private RecyclerView ratingRecyclerView;
+
+    /** @noinspection FieldCanBeLocal*/
     private RatingAdapter ratingAdapter;
+
+    /** @noinspection FieldCanBeLocal*/
     private List<HistoryItem> completedList;
 
     @Override

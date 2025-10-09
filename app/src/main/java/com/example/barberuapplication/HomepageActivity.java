@@ -64,11 +64,11 @@ public class HomepageActivity extends AppCompatActivity {
         ImageView apppointIcon = findViewById(R.id.appointlogo);
         ImageView hairstyleIcon = findViewById(R.id.haircutlogo);
         ImageView ratingIcon = findViewById(R.id.ratinglogo);
-        ImageView homeIcon = findViewById(R.id.homeview);
         ImageView mapIcon = findViewById(R.id.mapslogo);
         ImageView favIcon = findViewById(R.id.favoritelogo);
         ImageView aboutIcon = findViewById(R.id.aboutlogo);
         ImageView historyIcon = findViewById(R.id.historylogo);
+        ImageView storeIcon = findViewById(R.id.storelogo);
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -90,10 +90,16 @@ public class HomepageActivity extends AppCompatActivity {
         apppointIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, AppointmentActivity.class)));
         hairstyleIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, Camera.class)));
         ratingIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, Rating.class)));
-        homeIcon.setOnClickListener(v -> recreate());
         mapIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, Maps.class)));
         aboutIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, About.class)));
         historyIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, History.class)));
+
+        // ✅ Open store picker from homepage with only directions button visible
+        storeIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(HomepageActivity.this, BarberShopStorePicker.class);
+            intent.putExtra("mode", "homepage");
+            startActivity(intent);
+        });
     }
 
     private void showLogoutDialog() {
@@ -120,9 +126,6 @@ public class HomepageActivity extends AppCompatActivity {
         loadUserProfile();
     }
 
-    /**
-     * Updated selectCategory() to match HomepageAdmin behavior
-     */
     private void selectCategory(TextView selectedTab) {
         Context context = this;
         int selectedTextColor = ContextCompat.getColor(context, R.color.white);
@@ -136,7 +139,7 @@ public class HomepageActivity extends AppCompatActivity {
                 tab.setBackground(ContextCompat.getDrawable(context, R.drawable.rounded_transparent_background));
                 tab.setTextColor(unselectedTextColor);
             }
-            tab.setGravity(View.TEXT_ALIGNMENT_CENTER); // Center text over background
+            tab.setGravity(View.TEXT_ALIGNMENT_CENTER);
         }
     }
 
@@ -158,9 +161,6 @@ public class HomepageActivity extends AppCompatActivity {
         selectCategory(toolscat);
     }
 
-    /**
-     * Convert square bitmap to circular
-     */
     private Bitmap getCircularBitmap(Bitmap bitmap) {
         int size = Math.min(bitmap.getWidth(), bitmap.getHeight());
         Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
@@ -180,7 +180,7 @@ public class HomepageActivity extends AppCompatActivity {
     private void loadUserProfile() {
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         int userId = prefs.getInt("userID", 0);
-        String profileKey = "profilephoto_" + userId; // unique key per user
+        String profileKey = "profilephoto_" + userId;
         String profileUrl = prefs.getString(profileKey, "");
 
         if (!profileUrl.isEmpty()) {
@@ -202,12 +202,12 @@ public class HomepageActivity extends AppCompatActivity {
                     if (bitmap != null) {
                         userProfileImage.setImageBitmap(bitmap);
                     } else {
-                        userProfileImage.setImageResource(R.drawable.iconuser); // default
+                        userProfileImage.setImageResource(R.drawable.iconuser);
                     }
                 }
             }.execute(profileUrl);
         } else {
-            userProfileImage.setImageResource(R.drawable.iconuser); // default
+            userProfileImage.setImageResource(R.drawable.iconuser);
         }
     }
 }

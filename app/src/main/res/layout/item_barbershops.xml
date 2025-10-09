@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,110 +7,144 @@
     android:layout_marginHorizontal="16dp"
     android:layout_marginTop="12dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    app:strokeColor="#E0E0E0"
-    app:strokeWidth="1dp">
+    app:cardElevation="6dp"
+    android:backgroundTint="#FFFFFF"
+    app:strokeColor="#4A4A4A"
+    app:strokeWidth="1dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <!-- Store Image -->
         <ImageView
             android:id="@+id/imgBarbershop"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/rounded_image_bg"
-            android:scaleType="centerCrop"
-            android:src="@drawable/home"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription,ImageContrastCheck" />
+            android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/location"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="ContentDescription,ImageContrastCheck" />
 
         <!-- Barbershop Name -->
         <TextView
             android:id="@+id/tvBarbershopName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/imgBarbershop"
-            app:layout_constraintTop_toTopOf="@id/imgBarbershop"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="Classic Cuts Barbershop" />
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+        android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintStart_toEndOf="@id/imgBarbershop"
+        app:layout_constraintTop_toTopOf="@id/imgBarbershop"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Classic Cuts Barbershop" />
 
         <!-- Status -->
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/status_chip_closed"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/status_chip_open"
             android:paddingHorizontal="8dp"
             android:paddingVertical="2dp"
             android:text="Closed"
-            android:textColor="@color/green_500"
-            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:textSize="11sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/tvBarbershopName"
             app:layout_constraintTop_toBottomOf="@id/tvBarbershopName"
             tools:ignore="HardcodedText,TextContrastCheck"
             tools:text="Open" />
 
+        <!-- Haircut Available Badge -->
+        <TextView
+            android:id="@+id/tvHaircutAvailable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/status_chip_haircut"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="Haircut available here"
+            android:textColor="@android:color/white"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/tvStatus"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvStatus"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+
+
         <!-- Distance + Address -->
         <TextView
             android:id="@+id/tvDetails"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="3.2 km • 123 Main St, City"
-            android:textColor="@color/gray"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvStatus"
-            app:layout_constraintTop_toBottomOf="@id/tvStatus"
-            tools:ignore="HardcodedText,TextContrastCheck"
-            tools:text="2.4 km • 14 Market Ave, Quezon City" />
+            android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="3.2 km • 123 Main St, City"
+        android:textColor="@color/black"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvStatus"
+        app:layout_constraintTop_toBottomOf="@id/tvStatus"
+        tools:text="2.4 km • 14 Market Ave, Quezon City"
+            tools:ignore="HardcodedText" />
 
         <!-- Buttons -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:gravity="end"
-            app:layout_constraintTop_toBottomOf="@id/tvDetails"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tvDetails">
+            android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:weightSum="2"
+        app:layout_constraintTop_toBottomOf="@id/tvDetails"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvDetails"
+        app:layout_constraintBottom_toBottomOf="parent">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDirections"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#009688"
+                android:minWidth="0dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
                 android:text="Directions"
+                android:textColor="@android:color/white"
                 android:textSize="13sp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                tools:ignore="HardcodedText" />
+                app:rippleColor="@color/teal_700"
+                tools:ignore="HardcodedText,TextContrastCheck,VisualLintButtonSize" /> <!-- pressed ripple -->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMenu"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="Choose"
-                android:textSize="13sp"
-                android:minWidth="0dp"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMenu"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Choose"
+            android:textColor="@android:color/black"
+            android:textSize="13sp"
+            android:minWidth="0dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:backgroundTint="#FFC107"
+            app:rippleColor="@color/amber_800"
+            tools:ignore="HardcodedText,VisualLintButtonSize" /> <!-- pressed ripple -->
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>

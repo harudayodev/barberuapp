@@ -51,6 +51,7 @@ public class HomepageAdmin extends AppCompatActivity {
             shopName = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                     .getString("shop_name", "");
         }
+        //noinspection ConstantValue
         if (shopName != null && !shopName.isEmpty()) {
             shopNameText.setText("of " + shopName);
         } else {

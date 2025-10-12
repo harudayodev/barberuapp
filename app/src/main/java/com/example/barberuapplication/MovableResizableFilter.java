@@ -1,5 +1,6 @@
 package com.example.barberuapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ScaleGestureDetector;
@@ -30,6 +31,7 @@ public class MovableResizableFilter extends androidx.appcompat.widget.AppCompatI
         scaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(android.view.MotionEvent event) {
         // Only allow scaling, no moving

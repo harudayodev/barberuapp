@@ -22,11 +22,7 @@ public class Favorites extends AppCompatActivity {
 
         retbutton.setOnClickListener(v -> finish());
 
-        homebutton.setOnClickListener(v -> {
-            Intent intent = new Intent(Favorites.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        homebutton.setOnClickListener(v -> finish());
 
     }
 }

@@ -21,29 +21,9 @@ public class About extends AppCompatActivity {
         ImageView returnbutton = findViewById(R.id.returnbutton);
         ImageView homebutton = findViewById(R.id.homeview);
 
-        returnbutton.setOnClickListener(v -> {
-            String role = getIntent().getStringExtra("role");
-            Intent intent;
-            if ("admin".equals(role)) {
-                intent = new Intent(About.this, HomepageAdmin.class);
-            } else {
-                intent = new Intent(About.this, HomepageActivity.class);
-            }
-            startActivity(intent);
-            finish();
-        });
+        returnbutton.setOnClickListener(v -> finish());
 
-        homebutton.setOnClickListener(v -> {
-            String role = getIntent().getStringExtra("role");
-            Intent intent;
-            if ("admin".equals(role)) {
-                intent = new Intent(About.this, HomepageAdmin.class);
-            } else {
-                intent = new Intent(About.this, HomepageActivity.class);
-            }
-            startActivity(intent);
-            finish();
-        });
+        homebutton.setOnClickListener(v -> finish());
 
     }
 

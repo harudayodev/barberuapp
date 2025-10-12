@@ -177,8 +177,7 @@ public class HairstyleConfirm extends AppCompatActivity {
             if (hour == 16) minute = 0;
         }
 
-        @SuppressLint("SetTextI18n")
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+        @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, selectedHour, selectedMinute) -> {
                     if (selectedHour < 8 || selectedHour > 16 || (selectedHour == 16 && selectedMinute > 0)) {
                         Toast.makeText(this, "Please select a time between 8:00 AM and 4:00 PM", Toast.LENGTH_SHORT).show();
@@ -195,14 +194,16 @@ public class HairstyleConfirm extends AppCompatActivity {
                         return;
                     }
 
+                    // Format date and time
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-                    SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                    SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a", Locale.US); // 12-hour format
                     datetimePicker.setText(dateFormatter.format(selectedDateTime.getTime()) + " " +
                             timeFormatter.format(selectedDateTime.getTime()));
-                }, hour, minute, false);
+                }, hour, minute, false); // false = 12-hour view
 
         timePickerDialog.show();
     }
+
 
     private boolean isToday(Calendar cal) {
         Calendar today = Calendar.getInstance();

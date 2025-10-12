@@ -123,26 +123,9 @@ public class Maps extends AppCompatActivity {
         });
 
         // --- Return button
-        returnbutton.setOnClickListener(v -> {
-            String role = getIntent().getStringExtra("role");
-            if ("admin".equals(role)) {
-                startActivity(new Intent(Maps.this, HomepageAdmin.class));
-            } else {
-                startActivity(new Intent(Maps.this, HomepageActivity.class));
-            }
-            finish();
-        });
+        returnbutton.setOnClickListener(v -> finish());
 
-        // --- Home button
-        homebutton.setOnClickListener(v -> {
-            String role = getIntent().getStringExtra("role");
-            if ("admin".equals(role)) {
-                startActivity(new Intent(Maps.this, HomepageAdmin.class));
-            } else {
-                startActivity(new Intent(Maps.this, HomepageActivity.class));
-            }
-            finish();
-        });
+        homebutton.setOnClickListener(v -> finish());
     }
 
     @NonNull

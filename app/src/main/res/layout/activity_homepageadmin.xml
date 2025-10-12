@@ -51,11 +51,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Username here"
-        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/shopname"
         app:layout_constraintStart_toEndOf="@+id/settingsIcon"
         app:layout_constraintTop_toBottomOf="@+id/infowelcome"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText,TextContrastCheck" />
 
     <TextView
         android:id="@+id/shopname"
@@ -63,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="of Shop Name"
-        android:textSize="14sp"
+        android:textSize="17sp"
         app:layout_constraintStart_toEndOf="@+id/settingsIcon"
         app:layout_constraintTop_toBottomOf="@+id/username"
         tools:ignore="HardcodedText,TextContrastCheck" />
@@ -206,12 +208,12 @@
             tools:ignore="ContentDescription,ImageContrastCheck" />
 
         <TextView
-            android:id="@+id/feedbackservice"
+            android:id="@+id/reviewservice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="Feedbacks"
+            android:text="Reviews"
             android:textColor="@color/white"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="@+id/appointbg"
@@ -262,12 +264,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tools_container">
 
+        <!-- STORE -->
         <ImageView
-            android:id="@+id/aboutbg"
+            android:id="@+id/calendarbg"
             android:layout_width="63dp"
             android:layout_height="59dp"
             android:layout_marginStart="41dp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/iconcircle"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/calendarlogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="@+id/calendarbg"
+            app:layout_constraintEnd_toEndOf="@+id/calendarbg"
+            app:layout_constraintStart_toStartOf="@+id/calendarbg"
+            app:layout_constraintTop_toTopOf="@+id/calendarbg"
+            app:srcCompat="@drawable/calendar"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/calendarservice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Scheduling"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/calendarbg"
+            app:layout_constraintStart_toStartOf="@+id/calendarbg"
+            app:layout_constraintTop_toBottomOf="@+id/calendarbg"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+
+        <!-- ABOUT -->
+        <ImageView
+            android:id="@+id/aboutbg"
+            android:layout_width="63dp"
+            android:layout_height="59dp"
+            android:layout_marginStart="40dp"
+            app:layout_constraintStart_toEndOf="@+id/calendarbg"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/iconcircle"
             tools:ignore="ContentDescription,ImageContrastCheck" />
@@ -295,6 +333,7 @@
             app:layout_constraintStart_toStartOf="@+id/aboutbg"
             app:layout_constraintTop_toBottomOf="@+id/aboutbg"
             tools:ignore="HardcodedText,TextContrastCheck" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

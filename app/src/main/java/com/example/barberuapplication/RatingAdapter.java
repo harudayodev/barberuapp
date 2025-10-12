@@ -151,6 +151,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         holder.submitButton.setOnClickListener(v -> {
             float stars = holder.ratingStars.getRating();
             String reviewText = holder.reviewText.getText().toString().trim();
+            String barberName = item.getBarberName(); // get barber from HistoryItem
 
             if (stars == 0f) {
                 Toast.makeText(context, "Please select a star rating.", Toast.LENGTH_SHORT).show();
@@ -166,7 +167,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
             holder.submitButton.setEnabled(false);
             Toast.makeText(context, "Submitting review...", Toast.LENGTH_SHORT).show();
 
-            new SubmitReviewTask(context, userID, shopID, stars, reviewText,
+            new SubmitReviewTask(context, userID, shopID, stars, reviewText, barberName,
                     (success, submittedStars, submittedReviewContent) -> {
                         if (success) {
                             try {

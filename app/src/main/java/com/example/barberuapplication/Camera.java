@@ -289,11 +289,7 @@ public class Camera extends AppCompatActivity {
         });
 
 
-        returnButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Camera.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        returnButton.setOnClickListener(v -> finish());
     }
 
 

@@ -6,8 +6,9 @@
     android:id="@+id/reviewservice"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ReviewActivity">
+    tools:context=".Reviews">
 
+    <!-- Background image -->
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="match_parent"
@@ -22,6 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Return button -->
     <ImageView
         android:id="@+id/returnbutton"
         android:layout_width="59dp"
@@ -33,23 +35,39 @@
         app:srcCompat="@drawable/arrowreturn"
         tools:ignore="ContentDescription" />
 
+    <!-- Title / no rating text -->
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="No rating yet."
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/returnbutton"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
+    <!-- RecyclerView for reviews -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reviews_recycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/homebar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView3"
+        tools:ignore="SpeakableTextPresentCheck"
+        tools:listitem="@layout/item_review" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/homebar"
         android:layout_width="0dp"
-        android:layout_height="108dp"
+        android:layout_height="60dp"
         android:background="@color/espresso"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,19 +78,11 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/home"
-            app:layout_constraintBottom_toTopOf="@id/guideline_homebar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_homebar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_end="48dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

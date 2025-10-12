@@ -96,17 +96,9 @@ public class AppointmentActivity extends AppCompatActivity {
             noAppointmentText.setText("Please log in to view your appointments.");
         }
 
-        returnbutton.setOnClickListener(v -> {
-            Intent returnview = new Intent(AppointmentActivity.this, HomepageActivity.class);
-            startActivity(returnview);
-            finish();
-        });
+        returnbutton.setOnClickListener(v -> finish());
 
-        homebutton.setOnClickListener(v -> {
-            Intent intent = new Intent(AppointmentActivity.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        homebutton.setOnClickListener(v -> finish());
 
         cancelButton.setOnClickListener(v -> new AlertDialog.Builder(this)
                 .setTitle("Cancel Appointment")

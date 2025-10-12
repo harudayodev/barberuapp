@@ -72,11 +72,7 @@ public class BarberShopStorePicker extends AppCompatActivity {
 
         retbutton.setOnClickListener(v -> finish());
 
-        homebutton.setOnClickListener(v -> {
-            Intent intent = new Intent(BarberShopStorePicker.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        homebutton.setOnClickListener(v -> finish());
 
         mode = getIntent().getStringExtra("mode");
         if (mode == null) mode = "camera";

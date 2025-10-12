@@ -4,111 +4,90 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    android:backgroundTint="@color/white">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@color/white">
-
-        <!-- Customer Name -->
-        <TextView
-            android:id="@+id/text_customer_name_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Customer:"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="HardcodedText" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/text_customer_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/text_customer_name_label"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <!-- Haircut -->
-        <TextView
-            android:id="@+id/text_haircut_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Haircut:"
+            android:text="Customer Name"
+            android:textStyle="bold"
             android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_customer_name_label"
+            android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/text_haircut_name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:text="Haircut: Fade"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/text_haircut_label"
-            app:layout_constraintTop_toTopOf="@+id/text_haircut_label"/>
+            android:layout_marginTop="4dp"
+            tools:ignore="HardcodedText" />
 
-        <!-- Shave -->
+        <TextView
+            android:id="@+id/text_color_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Color: Brown"
+            android:textColor="@color/black"
+            android:layout_marginTop="2dp"
+            tools:ignore="HardcodedText" />
+
         <TextView
             android:id="@+id/text_shave_name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Shave: Classic"
+            android:textColor="@color/black"
             android:layout_marginTop="2dp"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="@+id/text_haircut_name"
-            app:layout_constraintTop_toBottomOf="@+id/text_haircut_name"/>
+            tools:ignore="HardcodedText" />
 
-        <!-- Barber + Date/Time -->
         <TextView
-            android:id="@+id/text_barber_time"
-            android:layout_width="0dp"
+            android:id="@+id/text_date_time"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:text="Date &amp; Time: 2025-10-15 10:00 AM"
             android:textColor="@color/black"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_shave_name"/>
+            android:layout_marginTop="6dp"
+            tools:ignore="HardcodedText" />
 
-        <!-- Action Buttons -->
-        <Button
-            android:id="@+id/button_accept"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/green_500"
-            android:text="Accept"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toStartOf="@+id/button_decline"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_barber_time"
-            tools:ignore="HardcodedText,TextContrastCheck,VisualLintButtonSize" />
+            android:orientation="horizontal"
+            android:weightSum="2">
 
-        <Button
-            android:id="@+id/button_decline"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/red_500"
-            android:text="Cancel"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@+id/button_accept"
-            app:layout_constraintTop_toTopOf="@+id/button_accept"
-            tools:ignore="HardcodedText,TextContrastCheck,VisualLintButtonSize" />
+            <Button
+                android:id="@+id/button_accept"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/green_500"
+                android:text="Accept"
+                android:textColor="@color/white"
+                tools:ignore="ButtonStyle,HardcodedText,TextContrastCheck,VisualLintButtonSize" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/button_decline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/red_500"
+                android:text="Decline"
+                android:textColor="@color/white"
+                tools:ignore="ButtonStyle,HardcodedText,TextContrastCheck,VisualLintButtonSize" />
+        </LinearLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

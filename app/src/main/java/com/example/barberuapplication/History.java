@@ -52,11 +52,7 @@ public class History extends AppCompatActivity {
 
         retbutton.setOnClickListener(v -> finish());
 
-        homebutton.setOnClickListener(v -> {
-            Intent intent = new Intent(History.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        homebutton.setOnClickListener(v -> finish());
 
         historyRecyclerView = findViewById(R.id.history_recyclerview);
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));

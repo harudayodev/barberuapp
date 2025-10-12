@@ -27,15 +27,17 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
     private final int shopID;
     private final float stars;
     private final String reviewContent;
+    private final String barberName;
     private final ReviewSubmitListener listener;
 
     public SubmitReviewTask(Context context, int userID, int shopID, float stars,
-                            String reviewContent, ReviewSubmitListener listener) {
+                            String reviewContent, String barberName, ReviewSubmitListener listener) {
         this.context = context;
         this.userID = userID;
         this.shopID = shopID;
         this.stars = stars;
         this.reviewContent = reviewContent;
+        this.barberName = barberName;
         this.listener = listener;
     }
 
@@ -43,13 +45,13 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... voids) {
         try {
-            // 🔹 Replace with your PHP endpoint
             URL url = new URL("https://barberucuts.site/barberuapp/submit_review.php");
 
             String data = "userID=" + URLEncoder.encode(String.valueOf(userID), StandardCharsets.UTF_8)
                     + "&shopID=" + URLEncoder.encode(String.valueOf(shopID), StandardCharsets.UTF_8)
                     + "&stars=" + URLEncoder.encode(String.valueOf(stars), StandardCharsets.UTF_8)
-                    + "&reviewcontent=" + URLEncoder.encode(reviewContent, StandardCharsets.UTF_8);
+                    + "&reviewcontent=" + URLEncoder.encode(reviewContent, StandardCharsets.UTF_8)
+                    + "&barber=" + URLEncoder.encode(barberName, StandardCharsets.UTF_8);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -62,17 +64,12 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
             writer.close();
             os.close();
 
-            InputStream is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line;
-
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
+            while ((line = br.readLine()) != null) sb.append(line);
 
             br.close();
-            is.close();
             conn.disconnect();
 
             return sb.toString();
@@ -91,7 +88,6 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
             String message = json.optString("message", "No message from server.");
 
             if (success) {
-                // ✅ Insert this block right here
                 JSONObject data = json.optJSONObject("data");
                 if (data != null && listener != null) {
                     float newStars = (float) data.optDouble("stars", stars);
@@ -109,5 +105,4 @@ public class SubmitReviewTask extends AsyncTask<Void, Void, String> {
             if (listener != null) listener.onReviewSubmitted(false, stars, e.getMessage());
         }
     }
-
 }

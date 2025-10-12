@@ -47,11 +47,8 @@ public class Rating extends AppCompatActivity {
         ImageView homebutton = findViewById(R.id.homeview);
 
         retbutton.setOnClickListener(v -> finish());
-        homebutton.setOnClickListener(v -> {
-            Intent intent = new Intent(Rating.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
-        });
+
+        homebutton.setOnClickListener(v -> finish());
 
         ratingRecyclerView = findViewById(R.id.rating_recycler);
         ratingRecyclerView.setLayoutManager(new LinearLayoutManager(this));

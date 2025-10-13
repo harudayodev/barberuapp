@@ -34,6 +34,21 @@
         app:srcCompat="@drawable/arrowreturn"
         tools:ignore="ContentDescription" />
 
+    <TextView
+        android:id="@+id/no_service_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No service to rate."
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="HardcodedText" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rating_recycler"
         android:layout_width="0dp"
@@ -67,6 +82,5 @@
             tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -213,6 +213,7 @@ public class AppointmentActivity extends AppCompatActivity {
                         noAppointmentText.setVisibility(View.GONE);
                         queueInfoCard.setVisibility(View.VISIBLE);
                         cancelButton.setVisibility(View.VISIBLE);
+                        queueMessageTextView.setVisibility(View.VISIBLE);
 
                         customerNameTextView.setText(customername);
                         //noinspection DataFlowIssue
@@ -262,6 +263,7 @@ public class AppointmentActivity extends AppCompatActivity {
                         noAppointmentText.setVisibility(View.VISIBLE);
                         queueInfoCard.setVisibility(View.GONE);
                         cancelButton.setVisibility(View.GONE);
+                        queueMessageTextView.setVisibility(View.GONE);
                     }
                 } catch (JSONException e) {
                     Log.e("FetchAppointmentTask", "JSON parsing error: " + e.getMessage() + "\nRaw response: " + result);

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,7 +32,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 
-
 public class AdminCalendar extends AppCompatActivity {
 
     private LinearLayout scheduleList;
@@ -50,15 +48,11 @@ public class AdminCalendar extends AppCompatActivity {
         ImageView homeButton = findViewById(R.id.homeview);
 
         returnButton.setOnClickListener(v -> finish());
-
         homeButton.setOnClickListener(v -> finish());
 
-        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        employeeEmail = prefs.getString("email", "");
-        //noinspection ConstantValue
-        if (employeeEmail == null || employeeEmail.isEmpty()) {
-            employeeEmail = getIntent().getStringExtra("email");
-        }
+        // ✅ Get email directly from intent
+        Intent intent = getIntent();
+        employeeEmail = intent.getStringExtra("email");
 
         if (employeeEmail == null || employeeEmail.isEmpty()) {
             Toast.makeText(this, "Email not found. Please log in again.", Toast.LENGTH_SHORT).show();
@@ -76,7 +70,7 @@ public class AdminCalendar extends AppCompatActivity {
             @Override
             protected JSONObject doInBackground(Void... voids) {
                 try {
-                    URL url = new URL("https://barberucuts.site/barberuapp/get_employee_schedule.php");
+                    URL url = new URL(Config.BASE_URL + "get_employee_schedule.php");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     conn.setDoOutput(true);
@@ -127,7 +121,7 @@ public class AdminCalendar extends AppCompatActivity {
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.WRAP_CONTENT
                             );
-                            params.setMargins(0, 0, 0, 32); // left, top, right, bottom
+                            params.setMargins(0, 0, 0, 32);
                             card.setLayoutParams(params);
 
                             CardView cardView = (CardView) card;
@@ -263,7 +257,7 @@ public class AdminCalendar extends AppCompatActivity {
             @Override
             protected JSONObject doInBackground(Void... voids) {
                 try {
-                    URL url = new URL("https://barberucuts.site/barberuapp/save_employee_availability.php");
+                    URL url = new URL(Config.BASE_URL + "save_employee_availability.php");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     conn.setDoOutput(true);

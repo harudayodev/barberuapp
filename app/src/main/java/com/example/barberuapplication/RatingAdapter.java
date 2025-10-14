@@ -18,7 +18,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
 
     private final Context context;
     private final List<HistoryItem> completedList;
-    private java.util.HashMap<Integer, JSONObject> userReviews = new java.util.HashMap<>();
+    private java.util.HashMap<String, JSONObject> userReviews = new java.util.HashMap<>();
 
     public RatingAdapter(Context context, List<HistoryItem> completedList) {
         this.context = context;
@@ -32,7 +32,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         return new RatingViewHolder(view);
     }
 
-    public void setUserReviews(java.util.HashMap<Integer, JSONObject> userReviews) {
+    public void setUserReviews(java.util.HashMap<String, JSONObject> userReviews) {
         this.userReviews = userReviews;
     }
 
@@ -41,7 +41,10 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
     public void onBindViewHolder(@NonNull RatingViewHolder holder, int position) {
         HistoryItem item = completedList.get(position);
         final int shopID = item.getShopID();
+        final String barberName = item.getBarberName();
         String status = item.getStatus();
+
+        final String reviewKey = shopID + "-" + barberName;
 
         holder.haircutName.setText(item.getHaircutName());
         holder.colorName.setText("Color: " + item.getColorName());
@@ -82,8 +85,8 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         holder.submitButton.setEnabled(true);
         holder.submitButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.espresso));
 
-        if (userReviews.containsKey(shopID)) {
-            JSONObject review = userReviews.get(shopID);
+        if (userReviews.containsKey(reviewKey)) {
+            JSONObject review = userReviews.get(reviewKey);
             try {
                 //noinspection DataFlowIssue
                 float stars = (float) review.getDouble("stars");
@@ -150,8 +153,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
         // Submit rating
         holder.submitButton.setOnClickListener(v -> {
             float stars = holder.ratingStars.getRating();
-            String reviewText = holder.reviewText.getText().toString().trim();
-            String barberName = item.getBarberName(); // get barber from HistoryItem
+            String reviewText = holder.reviewText.getText().toString().trim();// get barber from HistoryItem
 
             if (stars == 0f) {
                 Toast.makeText(context, "Please select a star rating.", Toast.LENGTH_SHORT).show();
@@ -159,10 +161,7 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
             }
 
             int userID = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE).getInt("userID", 0);
-            if (userID == 0) {
-                Toast.makeText(context, "Error: User not logged in.", Toast.LENGTH_LONG).show();
-                return;
-            }
+            if (userID == 0) return;
 
             holder.submitButton.setEnabled(false);
             Toast.makeText(context, "Submitting review...", Toast.LENGTH_SHORT).show();
@@ -174,14 +173,16 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
                                 JSONObject newReview = new JSONObject();
                                 newReview.put("stars", submittedStars);
                                 newReview.put("reviewcontent", submittedReviewContent);
-                                userReviews.put(shopID, newReview);
+                                // CHANGE 5: Update the local map with the composite key.
+                                userReviews.put(reviewKey, newReview);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            handleReviewSubmissionUI(holder, true, submittedStars, submittedReviewContent);
-                            notifyItemChanged(position);
+                            // Refresh this specific item to show the "submitted" state.
+                            notifyItemChanged(holder.getAdapterPosition());
                         } else {
-                            handleReviewSubmissionUI(holder, false, stars, submittedReviewContent);
+                            // Re-enable the button on failure.
+                            holder.submitButton.setEnabled(true);
                         }
                     }).execute();
         });

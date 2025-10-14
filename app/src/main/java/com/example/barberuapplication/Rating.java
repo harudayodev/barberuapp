@@ -116,6 +116,7 @@ public class Rating extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
             @Override
             protected String doInBackground(Void... voids) {
+                // ... doInBackground remains the same ...
                 try {
                     URL url = new URL(Config.BASE_URL + "get_reviews.php");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -155,17 +156,19 @@ public class Rating extends AppCompatActivity {
                     JSONObject jsonResponse = new JSONObject(result);
                     if ("success".equals(jsonResponse.getString("status"))) {
                         JSONObject reviewsObj = jsonResponse.getJSONObject("reviews");
-                        java.util.HashMap<Integer, JSONObject> reviewMap = new java.util.HashMap<>();
+                        // CHANGE: Use a HashMap with a String key to store reviews.
+                        java.util.HashMap<String, JSONObject> reviewMap = new java.util.HashMap<>();
 
                         Iterator<String> keys = reviewsObj.keys();
                         while (keys.hasNext()) {
+                            // The key is now the composite key, e.g., "1-John Doe"
                             String key = keys.next();
                             JSONObject obj = reviewsObj.getJSONObject(key);
-                            reviewMap.put(Integer.parseInt(key), obj);
+                            reviewMap.put(key, obj);
                         }
 
-                        // Once both lists are ready, update adapter
                         if (ratingAdapter != null) {
+                            // Pass the new map to the adapter.
                             ratingAdapter.setUserReviews(reviewMap);
                             ratingAdapter.notifyDataSetChanged();
                         }

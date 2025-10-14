@@ -97,11 +97,11 @@ public class BarberShopStorePicker extends AppCompatActivity {
 
         barbershopRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-// ✅ Initialize lists first
+        // ✅ Initialize lists first
         barbershopList = new ArrayList<>();
         filteredList = new ArrayList<>();
 
-// ✅ Use the correct constructor with selectedHaircutID
+        // ✅ Use the correct constructor with selectedHaircutID
         adapter = new BarbershopsAdapter(this, filteredList, selectedHaircutID);
         barbershopRecyclerView.setAdapter(adapter);
 
@@ -124,13 +124,16 @@ public class BarberShopStorePicker extends AppCompatActivity {
 
                         for (int i = 0; i < shopsArray.length(); i++) {
                             JSONObject shop = shopsArray.getJSONObject(i);
+                            // MODIFIED: Call the updated constructor with the new rating data
                             BarbershopModel model = new BarbershopModel(
                                     shop.getString("shopID"),
                                     shop.getString("name"),
                                     shop.getString("address"),
                                     shop.getString("status"),
                                     shop.optDouble("latitude", 0),
-                                    shop.optDouble("longitude", 0)
+                                    shop.optDouble("longitude", 0),
+                                    (float) shop.optDouble("average_rating", 0.0), // Parse rating
+                                    shop.optInt("review_count", 0)                  // Parse count
                             );
                             barbershopList.add(model);
                         }

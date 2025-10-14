@@ -41,23 +41,55 @@
             app:layout_constraintHorizontal_bias="0"
             tools:text="John Doe" />
 
+        <LinearLayout
+            android:id="@+id/ratingLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@id/btnChooseBarber"
+            app:layout_constraintStart_toStartOf="@id/tvBarberName"
+            app:layout_constraintTop_toBottomOf="@id/tvBarberName">
+
+            <RatingBar
+                android:id="@+id/barberRatingBar"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:progressTint="#FFD700"
+                android:stepSize="0.1"
+                tools:rating="4.2" />
+
+            <TextView
+                android:id="@+id/tvRatingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                tools:text="4.2 (8 reviews)" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tvAvailability"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:ellipsize="none"
+            android:maxLines="3"
+            android:scrollHorizontally="false"
+            android:singleLine="false"
             android:text="Available on: Monday, Tuesday, Wednesday, Thursday"
             android:textColor="@color/black"
             android:textSize="12sp"
-            android:ellipsize="none"
-            android:scrollHorizontally="false"
-            android:singleLine="false"
-            android:maxLines="3"
-            app:layout_constraintStart_toStartOf="@id/tvBarberName"
-            app:layout_constraintTop_toBottomOf="@id/tvBarberName"
             app:layout_constraintEnd_toStartOf="@id/btnChooseBarber"
-            tools:text="Available on: Monday, Tuesday, Wednesday, Thursday, Friday"
-            tools:ignore="HardcodedText" />
+            app:layout_constraintStart_toStartOf="@id/tvBarberName"
+            app:layout_constraintTop_toBottomOf="@id/ratingLayout"
+            tools:ignore="HardcodedText"
+            tools:text="Available on: Monday, Tuesday, Wednesday, Thursday, Friday" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChooseBarber"

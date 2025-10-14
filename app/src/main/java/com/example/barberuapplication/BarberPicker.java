@@ -49,7 +49,6 @@ public class BarberPicker extends AppCompatActivity {
         barbersRecyclerView.setAdapter(adapter);
 
         // Get shopID from previous activity
-        // ✅ FIX: Retrieve shopID as String, not int.
         String shopID = getIntent().getStringExtra("shopID");
         if (shopID == null || shopID.isEmpty()) {
             shopID = DEFAULT_SHOP_ID;
@@ -59,10 +58,8 @@ public class BarberPicker extends AppCompatActivity {
         fetchBarbers(shopID);
     }
 
-    // ✅ FIX: Changed shopID type to String
     private void fetchBarbers(String shopID) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        // ✅ The URL should now correctly include the String shopID
         @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"}) JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL + shopID, null,
                 response -> {
                     try {
@@ -73,12 +70,15 @@ public class BarberPicker extends AppCompatActivity {
                         barberList.clear();
                         for (int i = 0; i < barbersArray.length(); i++) {
                             JSONObject obj = barbersArray.getJSONObject(i);
+                            // MODIFIED: Call the updated constructor with the new rating data
                             barberList.add(new BarberModel(
                                     obj.getString("employeeID"),
                                     obj.getString("firstName"),
                                     obj.getString("lastName"),
                                     obj.getString("availabilityDay"),
-                                    obj.getBoolean("isAvailable")
+                                    obj.getBoolean("isAvailable"),
+                                    (float) obj.optDouble("average_rating", 0.0), // Parse rating
+                                    obj.optInt("review_count", 0)                  // Parse count
                             ));
                         }
                         adapter.notifyDataSetChanged();

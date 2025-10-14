@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,7 +45,7 @@ public class BarbershopsAdapter extends RecyclerView.Adapter<BarbershopsAdapter.
         return new ViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         BarbershopModel shop = barbershopList.get(position);
@@ -60,6 +62,22 @@ public class BarbershopsAdapter extends RecyclerView.Adapter<BarbershopsAdapter.
             holder.tvStatus.setText("Closed");
             holder.tvStatus.setBackgroundResource(R.drawable.status_chip_closed);
             holder.tvStatus.setTextColor(Color.WHITE);
+        }
+
+        // ADDED: This logic sets the rating and hides the view if there are no reviews.
+        if (shop.getReviewCount() > 0) {
+            holder.ratingLayout.setVisibility(View.VISIBLE);
+            holder.shopRatingBar.setRating(shop.getAverageRating());
+
+            String reviewText = shop.getReviewCount() == 1 ? "review" : "reviews";
+            String ratingText = String.format("%.1f (%d %s)",
+                    shop.getAverageRating(),
+                    shop.getReviewCount(),
+                    reviewText);
+            holder.tvRatingText.setText(ratingText);
+        } else {
+            // If no reviews, hide the entire rating section.
+            holder.ratingLayout.setVisibility(View.GONE);
         }
 
         // ✅ Directions Button → Google Maps
@@ -171,6 +189,11 @@ public class BarbershopsAdapter extends RecyclerView.Adapter<BarbershopsAdapter.
         TextView tvBarbershopName, tvStatus, tvDetails, tvHaircutAvailable;
         MaterialButton btnDirections, btnMenu;
 
+        // ADDED: References for the rating UI elements
+        LinearLayout ratingLayout;
+        RatingBar shopRatingBar;
+        TextView tvRatingText;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgBarbershop = itemView.findViewById(R.id.imgBarbershop);
@@ -180,6 +203,11 @@ public class BarbershopsAdapter extends RecyclerView.Adapter<BarbershopsAdapter.
             tvHaircutAvailable = itemView.findViewById(R.id.tvHaircutAvailable);
             btnDirections = itemView.findViewById(R.id.btnDirections);
             btnMenu = itemView.findViewById(R.id.btnMenu);
+
+            // ADDED: Find the new views by their IDs
+            ratingLayout = itemView.findViewById(R.id.ratingLayout);
+            shopRatingBar = itemView.findViewById(R.id.shopRatingBar);
+            tvRatingText = itemView.findViewById(R.id.tvRatingText);
         }
     }
 }

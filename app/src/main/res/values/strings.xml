@@ -48,5 +48,6 @@
     <string name="developer_1_bio">Full Stack Lead. Made the app from the ground up with extensive code knowledge.</string>
     <string name="dev2_name">Francis Julian De Regla</string>
     <string name="developer_2_bio">Front End Lead. Designed the app and all its interfaces for the user to explore.</string>
+    <string name="resume_preview">Resume Preview</string>
 
 </resources>

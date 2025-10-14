@@ -9,21 +9,21 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <!-- Background Image -->
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
         android:alpha="0.85"
         android:contentDescription="@null"
+        android:scaleType="centerCrop"
         android:src="@drawable/bgapp1"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
-    <!-- Logo Text -->
     <TextView
         android:id="@+id/logotext"
         android:layout_width="wrap_content"
@@ -38,7 +38,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText" />
 
-    <!-- Logo Image -->
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="160dp"
@@ -52,7 +51,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Username Input -->
     <EditText
         android:id="@+id/username_input"
         android:layout_width="280dp"
@@ -74,7 +72,6 @@
         tools:ignore="Autofill,HardcodedText,TextFields,TextContrastCheck" />
 
 
-    <!-- Password Input -->
     <EditText
         android:id="@+id/password_input"
         android:layout_width="280dp"
@@ -111,8 +108,6 @@
         app:layout_constraintTop_toTopOf="@id/password_input"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-    <!-- Sign In Button -->
-
     <TextView
         android:id="@+id/resetpass"
         android:layout_width="wrap_content"
@@ -128,6 +123,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/password_input"
         tools:ignore="HardcodedText,TouchTargetSizeCheck" />
+
 
     <Button
         android:id="@+id/login_btn"
@@ -146,7 +142,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText" />
 
-    <!-- Sign Up Button -->
     <Button
         android:id="@+id/register_btn"
         android:layout_width="160dp"
@@ -163,5 +158,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/barber_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:text="Are you a barber"
+        android:textColor="@color/espresso"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/register_btn"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/barberapply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Apply now!"
+        android:textColor="#FF0000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barber_prompt"
+        tools:ignore="HardcodedText,TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

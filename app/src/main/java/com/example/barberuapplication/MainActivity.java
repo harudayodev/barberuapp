@@ -19,6 +19,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         Button registerBtn = findViewById(R.id.register_btn);
         ImageView showPasswordIcon = findViewById(R.id.showpassword);
         TextView resetPass = findViewById(R.id.resetpass);
+        TextView barberApply = findViewById(R.id.barberapply);
 
         DbHelper dbHelper = new DbHelper();
 
@@ -155,6 +157,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         });
+
+        barberApply.setOnClickListener(view -> { {
+            Intent applyIntent = new Intent(MainActivity.this, ApplyBarber.class);
+            startActivity(applyIntent);
+        }});
 
         registerBtn.setOnClickListener(view -> {
             Intent signupIntent = new Intent(MainActivity.this, RegisterActivity.class);

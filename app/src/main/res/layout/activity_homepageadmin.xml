@@ -32,6 +32,18 @@
         app:srcCompat="@drawable/iconuser"
         tools:ignore="ContentDescription" />
 
+    <ImageView
+        android:id="@+id/notificationBell"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@id/settingsIcon"
+        app:layout_constraintStart_toStartOf="@id/settingsIcon"
+        app:layout_constraintTop_toBottomOf="@id/settingsIcon"
+        app:srcCompat="@drawable/bell"
+        app:tint="@color/white"
+        tools:ignore="ContentDescription,ImageContrastCheck" />
+
     <TextView
         android:id="@+id/infowelcome"
         android:layout_width="wrap_content"
@@ -99,13 +111,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="40dp"
         android:text="Categories"
         android:textColor="@color/white"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logout_text"
+        app:layout_constraintTop_toBottomOf="@+id/notificationBell"
         tools:ignore="HardcodedText,TextContrastCheck" />
 
     <TextView

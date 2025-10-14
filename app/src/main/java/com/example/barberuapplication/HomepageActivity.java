@@ -14,14 +14,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.app.AlertDialog;
-
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-
 import android.content.SharedPreferences;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,6 +32,7 @@ public class HomepageActivity extends AppCompatActivity {
     private TextView allcat, servicescat, toolscat;
     private TextView[] categoryTabs;
     private ImageView userProfileImage;
+    private boolean isBellActive = false;
 
     @SuppressLint({"MissingInflatedId", "CutPasteId"})
     @Override
@@ -43,21 +43,16 @@ public class HomepageActivity extends AppCompatActivity {
 
         ImageView logoutIcon = findViewById(R.id.logoutbutton);
         TextView usernameText = findViewById(R.id.username);
-
         allcat = findViewById(R.id.allcat);
         servicescat = findViewById(R.id.servicescat);
         toolscat = findViewById(R.id.toolscat);
         servicesContainer = findViewById(R.id.services_container);
         toolsContainer = findViewById(R.id.tools_container);
-
         categoryTabs = new TextView[]{allcat, servicescat, toolscat};
+        userProfileImage = findViewById(R.id.settingsIcon);
 
-        userProfileImage = findViewById(R.id.settingsIcon); // Display profile photo here
-
-        String fullname = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-                .getString("fullname", "User");
+        String fullname = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("fullname", "User");
         usernameText.setText(fullname);
-
         loadUserProfile();
 
         ImageView settingsIcon = findViewById(R.id.settingsIcon);
@@ -69,6 +64,7 @@ public class HomepageActivity extends AppCompatActivity {
         ImageView aboutIcon = findViewById(R.id.aboutlogo);
         ImageView historyIcon = findViewById(R.id.historylogo);
         ImageView storeIcon = findViewById(R.id.storelogo);
+        ImageView notificationBell = findViewById(R.id.notificationBell);
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -78,11 +74,9 @@ public class HomepageActivity extends AppCompatActivity {
         });
 
         logoutIcon.setOnClickListener(v -> showLogoutDialog());
-
         allcat.setOnClickListener(v -> showAll());
         servicescat.setOnClickListener(v -> showServices());
         toolscat.setOnClickListener(v -> showTools());
-
         showAll();
 
         settingsIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, Settings.class)));
@@ -94,7 +88,20 @@ public class HomepageActivity extends AppCompatActivity {
         aboutIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, About.class)));
         historyIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, History.class)));
 
-        // ✅ Open store picker from homepage with only directions button visible
+        // ❤️ CLEANED UP THE CLICK LISTENER
+        notificationBell.setOnClickListener(v -> {
+            isBellActive = !isBellActive;
+
+            if (isBellActive) {
+                notificationBell.setImageResource(R.drawable.bell_active);
+                // You can add logic here later to show a notification screen
+                Toast.makeText(HomepageActivity.this, "Notifications Opened", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(HomepageActivity.this, "Notification Closed", Toast.LENGTH_SHORT).show();
+                notificationBell.setImageResource(R.drawable.bell);
+            }
+        });
+
         storeIcon.setOnClickListener(v -> {
             Intent intent = new Intent(HomepageActivity.this, BarberShopStorePicker.class);
             intent.putExtra("mode", "homepage");
@@ -102,6 +109,7 @@ public class HomepageActivity extends AppCompatActivity {
         });
     }
 
+    // ... (The rest of your file stays exactly the same, sweetie!)
     private void showLogoutDialog() {
         new AlertDialog.Builder(HomepageActivity.this)
                 .setTitle("Logout")

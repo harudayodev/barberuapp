@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/button_container"
+        app:layout_constraintBottom_toTopOf="@id/hair_list"
         app:implementationMode="performance"
         app:scaleType="fillCenter" />
 
@@ -42,8 +42,24 @@
         app:layout_constraintTop_toBottomOf="@id/return_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/filter_list"
+        app:layout_constraintBottom_toTopOf="@id/hair_list"
         tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/hair_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/previewView"
+        app:layout_constraintBottom_toBottomOf="@id/previewView"
+        app:layout_constraintStart_toStartOf="@id/previewView"
+        app:layout_constraintEnd_toEndOf="@id/previewView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintWidth_percent="0.5"
+        android:contentDescription="Hair Overlay"
+        tools:ignore="HardcodedText" />
 
     <ProgressBar
         android:id="@+id/loading_spinner"
@@ -64,13 +80,25 @@
         android:textSize="16sp"
         android:layout_marginBottom="8dp"
         android:layout_gravity="center_horizontal"
-        app:layout_constraintBottom_toTopOf="@id/filter_list"
+        app:layout_constraintBottom_toTopOf="@id/hair_list"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hair_list"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:scrollbars="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/filter_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SpeakableTextPresentCheck"
+        tools:listitem="@layout/item_hair" />
 
-    <!-- Horizontal Filter List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filter_list"
         android:layout_width="match_parent"
@@ -155,5 +183,4 @@
             android:layout_marginStart="16dp"
             tools:ignore="HardcodedText" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

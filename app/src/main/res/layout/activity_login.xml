@@ -63,7 +63,8 @@
         app:hintTextColor="@color/hint_color_selector"
         app:layout_constraintTop_toBottomOf="@id/imageView3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="HardcodedText">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/username_input"
@@ -71,13 +72,14 @@
             android:layout_height="60dp"
             android:background="@drawable/roundc"
             android:backgroundTint="@color/lightshade"
+            android:hint=""
+            android:inputType="textEmailAddress"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:textColor="@color/white"
             android:textColorHint="@color/light_gray"
             android:textSize="16sp"
-            android:inputType="textEmailAddress"
-            android:hint="" />
+            tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -95,7 +97,8 @@
         app:endIconTint="@color/espresso"
         app:layout_constraintTop_toBottomOf="@id/email_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="HardcodedText">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password_input"
@@ -103,13 +106,14 @@
             android:layout_height="60dp"
             android:background="@drawable/roundc"
             android:backgroundTint="@color/lightshade"
+            android:hint=""
+            android:inputType="textPassword"
             android:paddingStart="20dp"
             android:paddingEnd="60dp"
             android:textColor="@color/white"
             android:textColorHint="@color/light_gray"
             android:textSize="16sp"
-            android:inputType="textPassword"
-            android:hint="" />
+            tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
 

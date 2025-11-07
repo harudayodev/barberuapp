@@ -80,7 +80,8 @@
                 app:hintTextColor="@color/hint_color_selector"
                 app:layout_constraintTop_toBottomOf="@id/textViewSubtitle"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="HardcodedText">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fname_input"
@@ -92,7 +93,8 @@
                     android:paddingEnd="20dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/light_gray"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Last Name -->
@@ -110,7 +112,8 @@
                 app:hintTextColor="@color/hint_color_selector"
                 app:layout_constraintTop_toBottomOf="@id/fname_layout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="HardcodedText">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/lname_input"
@@ -122,7 +125,8 @@
                     android:paddingEnd="20dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/light_gray"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Contact -->
@@ -140,7 +144,8 @@
                 app:hintTextColor="@color/hint_color_selector"
                 app:layout_constraintTop_toBottomOf="@id/lname_layout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="HardcodedText">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/contact_input"
@@ -154,7 +159,7 @@
                     android:textColor="@color/white"
                     android:textColorHint="@color/light_gray"
                     android:textSize="16sp"
-                    tools:ignore="SpeakableTextPresentCheck" />
+                    tools:ignore="SpeakableTextPresentCheck,TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Address -->
@@ -172,7 +177,8 @@
                 app:hintTextColor="@color/hint_color_selector"
                 app:layout_constraintTop_toBottomOf="@id/contact_layout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="HardcodedText">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/address_input"
@@ -186,7 +192,7 @@
                     android:textColor="@color/white"
                     android:textColorHint="@color/light_gray"
                     android:textSize="16sp"
-                    tools:ignore="SpeakableTextPresentCheck" />
+                    tools:ignore="SpeakableTextPresentCheck,TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Email -->
@@ -204,7 +210,8 @@
                 app:hintTextColor="@color/hint_color_selector"
                 app:layout_constraintTop_toBottomOf="@id/address_layout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="HardcodedText">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email_input"
@@ -217,7 +224,8 @@
                     android:paddingEnd="20dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/light_gray"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Barbershop Spinner -->
@@ -253,6 +261,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:backgroundTint="@color/lightshade"
+                    android:elevation="4dp"
                     android:gravity="center_vertical|start"
                     android:paddingStart="20dp"
                     android:paddingEnd="60dp"
@@ -260,8 +269,7 @@
                     android:textAllCaps="false"
                     android:textColor="@color/light_gray"
                     android:textSize="16sp"
-                    android:elevation="4dp"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText,TextContrastCheck,VisualLintButtonSize" />
 
                 <ImageButton
                     android:id="@+id/clear_resume_btn"
@@ -273,7 +281,7 @@
                     android:src="@drawable/ic_close"
                     android:visibility="gone"
                     app:tint="@color/light_gray"
-                    tools:ignore="SpeakableTextPresentCheck"
+                    tools:ignore="ContentDescription,SpeakableTextPresentCheck,ImageContrastCheck"
                     tools:visibility="visible" />
             </FrameLayout>
 

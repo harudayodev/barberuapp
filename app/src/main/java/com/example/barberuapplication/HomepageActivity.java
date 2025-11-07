@@ -88,13 +88,11 @@ public class HomepageActivity extends AppCompatActivity {
         aboutIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, About.class)));
         historyIcon.setOnClickListener(v -> startActivity(new Intent(HomepageActivity.this, History.class)));
 
-        // ❤️ CLEANED UP THE CLICK LISTENER
         notificationBell.setOnClickListener(v -> {
             isBellActive = !isBellActive;
 
             if (isBellActive) {
                 notificationBell.setImageResource(R.drawable.bell_active);
-                // You can add logic here later to show a notification screen
                 Toast.makeText(HomepageActivity.this, "Notifications Opened", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(HomepageActivity.this, "Notification Closed", Toast.LENGTH_SHORT).show();
@@ -108,8 +106,6 @@ public class HomepageActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
-
-    // ... (The rest of your file stays exactly the same, sweetie!)
     private void showLogoutDialog() {
         new AlertDialog.Builder(HomepageActivity.this)
                 .setTitle("Logout")

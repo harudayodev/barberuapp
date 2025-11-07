@@ -52,22 +52,18 @@ public class HomepageAdmin extends AppCompatActivity {
         toolsContainer = findViewById(R.id.tools_container);
         categoryTabs = new TextView[]{allcat, toolscat};
 
-        // ✅ Load fullname
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String fullname = prefs.getString("fullname", "User");
         usernameText.setText(fullname);
 
-        // ✅ Load shop name
         String shopName = prefs.getString("shop_name", "");
         shopNameText.setText(shopName.isEmpty() ? "" : "of " + shopName);
 
-        // ✅ Load profile photo
         loadUserProfile();
 
         @SuppressLint("CutPasteId") ImageView settingsIcon = findViewById(R.id.settingsIcon);
         ImageView queueIcon = findViewById(R.id.queuelogo);
         ImageView feedbackIcon = findViewById(R.id.feedbacklogo);
-        ImageView homeIcon = findViewById(R.id.homeview);
         ImageView mapIcon = findViewById(R.id.maplogo);
         ImageView calenderIcon = findViewById(R.id.calendarlogo);
         ImageView aboutIcon = findViewById(R.id.aboutlogo);
@@ -81,12 +77,10 @@ public class HomepageAdmin extends AppCompatActivity {
 
         logoutIcon.setOnClickListener(v -> showLogoutDialog());
 
-        // ✅ Category tabs
         allcat.setOnClickListener(v -> showAll());
         toolscat.setOnClickListener(v -> showTools());
         showAll();
 
-        // ----------------- BUTTON CLICK LISTENERS -----------------
         settingsIcon.setOnClickListener(v -> {
             Intent settingview = new Intent(HomepageAdmin.this, Settings.class);
             settingview.putExtra("fullname", fullname);
@@ -107,8 +101,6 @@ public class HomepageAdmin extends AppCompatActivity {
             ratingview.putExtra("role", "admin");
             startActivity(ratingview);
         });
-
-        homeIcon.setOnClickListener(v -> recreate());
 
         mapIcon.setOnClickListener(v -> {
             Intent mapview = new Intent(HomepageAdmin.this, Maps.class);

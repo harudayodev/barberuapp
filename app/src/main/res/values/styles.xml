@@ -58,4 +58,10 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
+    <style name="EnlargedHintStyle" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/espresso</item>
+    </style>
+
 </resources>

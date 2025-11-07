@@ -9,7 +9,6 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,8 +17,9 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,22 +48,28 @@ public class MainActivity extends AppCompatActivity {
         EditText passwordInput = findViewById(R.id.password_input);
         Button loginBtn = findViewById(R.id.login_btn);
         Button registerBtn = findViewById(R.id.register_btn);
-        ImageView showPasswordIcon = findViewById(R.id.showpassword);
         TextView resetPass = findViewById(R.id.resetpass);
         TextView barberApply = findViewById(R.id.barberapply);
 
+        TextInputLayout emailLayout = findViewById(R.id.email_layout);
+        TextInputLayout passwordLayout = findViewById(R.id.password_layout);
+
+        emailLayout.setExpandedHintEnabled(true);
+        passwordLayout.setExpandedHintEnabled(true);
+        emailLayout.setHintTextAppearance(R.style.EnlargedHintStyle);
+        passwordLayout.setHintTextAppearance(R.style.EnlargedHintStyle);
+
         DbHelper dbHelper = new DbHelper();
 
-        showPasswordIcon.setOnClickListener(v -> {
+        passwordLayout.setEndIconOnClickListener(v -> {
             if (isPasswordVisible) {
                 passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                showPasswordIcon.setImageResource(R.drawable.showpass);
                 isPasswordVisible = false;
             } else {
                 passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                showPasswordIcon.setImageResource(R.drawable.hidepass);
                 isPasswordVisible = true;
             }
+            // Keep cursor at end
             passwordInput.setSelection(passwordInput.getText().length());
         });
 
@@ -87,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
                     String employeeId = data.optString("employee_id", null);
                     String shopId = data.optString("shop_id", null);
                     String shopName = data.optString("shop_name", null);
-                    //noinspection ConstantValue
                     int employeeIdInt = employeeId != null ? Integer.parseInt(employeeId) : -1;
 
                     SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -102,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply();
 
                     runOnUiThread(() -> {
-                        // Inflate custom layout
                         View dialogView = getLayoutInflater().inflate(R.layout.dialog_login_success, null);
                         TextView messageText = dialogView.findViewById(R.id.message_text);
                         messageText.setText("Welcome, " + fullname + "!");
@@ -112,12 +116,10 @@ public class MainActivity extends AppCompatActivity {
                                 .setCancelable(false)
                                 .create();
 
-                        // Remove default white padding/background
                         if (dialog.getWindow() != null) {
                             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                         }
 
-                        // Force width and padding
                         LinearLayout layout = dialogView.findViewById(R.id.root_linear_layout);
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                                 dpToPx(150),
@@ -128,13 +130,10 @@ public class MainActivity extends AppCompatActivity {
 
                         dialog.show();
 
-                        // Optional bounce animation
                         dialogView.startAnimation(android.view.animation.AnimationUtils.loadAnimation(MainActivity.this, R.anim.bounce));
 
-                        // Auto-close after 1.5 seconds
                         dialogView.postDelayed(() -> {
                             dialog.dismiss();
-
                             Intent intent;
                             if ("employee".equalsIgnoreCase(role)) {
                                 intent = new Intent(MainActivity.this, HomepageAdmin.class);
@@ -158,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
-        barberApply.setOnClickListener(view -> { {
+        barberApply.setOnClickListener(view -> {
             Intent applyIntent = new Intent(MainActivity.this, ApplyBarber.class);
             startActivity(applyIntent);
-        }});
+        });
 
         registerBtn.setOnClickListener(view -> {
             Intent signupIntent = new Intent(MainActivity.this, RegisterActivity.class);
@@ -176,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Helper to convert dp to pixels
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);

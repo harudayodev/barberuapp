@@ -88,7 +88,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hair_list"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
@@ -102,7 +102,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filter_list"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"

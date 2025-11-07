@@ -6,4 +6,5 @@
     </style>
 
     <style name="Theme.BarberuApplication" parent="Base.Theme.BarberuApplication" />
+
 </resources>

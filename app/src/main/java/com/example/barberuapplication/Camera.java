@@ -131,6 +131,7 @@ public class Camera extends AppCompatActivity {
         setupButtonClickListeners();
     }
 
+    @SuppressLint("SetTextI18n")
     private void setupHairList() {
         hairList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         hairList.setVisibility(View.GONE);
@@ -148,11 +149,38 @@ public class Camera extends AppCompatActivity {
             }
 
             mainHandler.post(() -> {
-                HairAdapter hairAdapter = new HairAdapter(hairBitmaps, bitmap -> {
-                    selectedHairBitmap = bitmap;
-                    hairOverlay.setImageBitmap(bitmap);
-                    hairOverlay.setVisibility(View.VISIBLE);
-                    showStyledToast("Hair selected");
+                hairAdapter = new HairAdapter(hairBitmaps, bitmap -> {
+                    int clickedPosition = hairBitmaps.indexOf(bitmap);
+
+                    if (selectedHairBitmap == bitmap) {
+                        // Deselect both
+                        selectedHairBitmap = null;
+                        hairOverlay.setVisibility(View.GONE);
+                        hairAdapter.setSelectedPosition(RecyclerView.NO_POSITION);
+                        filterAdapter.setSelectedPosition(RecyclerView.NO_POSITION);
+                        selectedHaircutLabel.setText("No haircut selected");
+                        setCaptureButtonEnabled(false);
+                        showStyledToast("Hair deselected");
+                    } else {
+                        // Select both
+                        selectedHairBitmap = bitmap;
+                        hairOverlay.setImageBitmap(bitmap);
+                        hairOverlay.setVisibility(View.VISIBLE);
+                        hairAdapter.setSelectedPosition(clickedPosition);
+                        filterAdapter.setSelectedPosition(clickedPosition);
+                        selectedFilterPosition = clickedPosition;
+
+                        // Update haircut name label if exists
+                        if (filterAdapter.getHaircutList().size() > clickedPosition) {
+                            Haircut haircut = filterAdapter.getHaircutList().get(clickedPosition);
+                            selectedHaircutLabel.setText("Selected: " + haircut.getName());
+                        } else {
+                            selectedHaircutLabel.setText("Selected Hair #" + (clickedPosition + 1));
+                        }
+
+                        setCaptureButtonEnabled(true);
+                        showStyledToast("Hair selected");
+                    }
                 });
 
                 hairList.setAdapter(hairAdapter);
@@ -161,6 +189,8 @@ public class Camera extends AppCompatActivity {
             });
         });
     }
+
+
 
     /** @noinspection SameParameterValue*/
     private Bitmap getScaledBitmap(int resId, int width, int height) {

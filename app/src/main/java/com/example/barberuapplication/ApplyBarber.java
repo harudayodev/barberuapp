@@ -41,6 +41,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,6 +82,25 @@ public class ApplyBarber extends AppCompatActivity {
         clearResumeBtn = findViewById(R.id.clear_resume_btn);
         submitBtn = findViewById(R.id.submit_btn);
 
+
+        TextInputLayout fnameLayout = findViewById(R.id.fname_layout);
+        TextInputLayout lnameLayout = findViewById(R.id.lname_layout);
+        TextInputLayout contactLayout = findViewById(R.id.contact_layout);
+        TextInputLayout addressLayout = findViewById(R.id.address_layout);
+        TextInputLayout emailLayout = findViewById(R.id.email_layout);
+
+        fnameLayout.setExpandedHintEnabled(true);
+        lnameLayout.setExpandedHintEnabled(true);
+        contactLayout.setExpandedHintEnabled(true);
+        addressLayout.setExpandedHintEnabled(true);
+        emailLayout.setExpandedHintEnabled(true);
+
+        fnameLayout.setHintTextAppearance(R.style.EnlargedHintStyle);
+        lnameLayout.setHintTextAppearance(R.style.EnlargedHintStyle);
+        contactLayout.setHintTextAppearance(R.style.EnlargedHintStyle);
+        addressLayout.setHintTextAppearance(R.style.EnlargedHintStyle);
+        emailLayout.setHintTextAppearance(R.style.EnlargedHintStyle);
+
         setupContactInput();
 
         imagePickerLauncher = registerForActivityResult(
@@ -94,7 +114,17 @@ public class ApplyBarber extends AppCompatActivity {
                 });
 
         returnBtn.setOnClickListener(v -> handleReturn());
-        clearResumeBtn.setOnClickListener(v -> clearSelectedImage());
+        clearResumeBtn.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Remove image?")
+                    .setMessage("Are you sure you want to remove the uploaded image?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        clearSelectedImage();
+                        showToast("Resume image removed.");
+                    })
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .show();
+        });
         resumeUploadBtn.setOnClickListener(v -> {
             if (selectedImageUri != null) {
                 showImagePreview();
@@ -193,7 +223,7 @@ public class ApplyBarber extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void setupContactInput() {
-        contactInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(13)});
+        contactInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16)});
         contactInput.addTextChangedListener(new TextWatcher() {
             private boolean isUpdating = false;
 
@@ -203,19 +233,32 @@ public class ApplyBarber extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-            @SuppressLint("SetTextI18n")
             @Override
             public void afterTextChanged(Editable s) {
                 if (isUpdating) return;
-                if (!s.toString().startsWith("+63")) {
-                    isUpdating = true;
-                    contactInput.setText("+63");
-                    contactInput.setSelection(contactInput.getText().length());
-                    isUpdating = false;
+                isUpdating = true;
+
+                String input = s.toString().replace(" ", "");
+                if (!input.startsWith("+63")) {
+                    input = "+63";
                 }
+
+                String numberPart = input.replace("+63", "");
+
+                StringBuilder formatted = new StringBuilder("+63");
+                if (!numberPart.isEmpty()) {
+                    formatted.append(" ");
+                    for (int i = 0; i < numberPart.length(); i++) {
+                        formatted.append(numberPart.charAt(i));
+                        if (i == 2 || i == 5) formatted.append(" ");
+                    }
+                }
+                contactInput.setText(formatted.toString().trim());
+                contactInput.setSelection(contactInput.getText().length());
+                isUpdating = false;
             }
         });
-        contactInput.setText("+63");
+        contactInput.setText("+63 ");
     }
 
     private void handleSubmit() {
